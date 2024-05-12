@@ -38,4 +38,7 @@ public:
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> CameraComponent;
+
+	UPROPERTY(Category = Movement, EditAnywhere)
+	TObjectPtr<class UFloatingPawnMovement> FloatingPawnMovement;
 };
