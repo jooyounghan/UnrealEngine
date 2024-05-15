@@ -23,14 +23,4 @@ protected:
 private:
 	void InputMove(const struct FInputActionValue& InputValue);
 	void InputTurn(const struct FInputActionValue& InputValue);
-
-protected:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Input)
-	TObjectPtr<class UInputMappingContext> InputMappingContext;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	TObjectPtr<class UInputAction> MoveAction;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Input)
-	TObjectPtr<class UInputAction> TurnAction;
 };
