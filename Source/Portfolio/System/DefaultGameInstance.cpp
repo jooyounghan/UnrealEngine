@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DefaultGameInstance.h"
-#include "DefaultAssetManager.h"
+#include "System/DefaultGameInstance.h"
+#include "Data/DefaultAssetManager.h"
 
 UDefaultGameInstance::UDefaultGameInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

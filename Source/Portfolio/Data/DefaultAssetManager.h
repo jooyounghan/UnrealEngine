@@ -7,7 +7,7 @@
 #include "GameplayTagContainer.h"
 
 #include "Log/LogChannel.h"
-#include "Data/InputPrimaryDataAsset.h"
+#include "Data/Asset/InputPrimaryDataAsset.h"
 
 #include "DefaultAssetManager.generated.h"
 

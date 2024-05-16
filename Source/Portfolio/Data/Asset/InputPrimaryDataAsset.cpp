@@ -2,7 +2,7 @@
 
 
 #include "Log/LogChannel.h"
-#include "Data/InputPrimaryDataAsset.h"
+#include "Data/Asset/InputPrimaryDataAsset.h"
 #include "UObject/ObjectSaveContext.h"
 
 void UInputPrimaryDataAsset::PreSave(FObjectPreSaveContext ObjectSaveContext)

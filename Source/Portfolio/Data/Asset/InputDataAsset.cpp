@@ -1,6 +1,6 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Data/InputDataAsset.h"
+#include "Data/Asset/InputDataAsset.h"
 #include "Log/LogChannel.h"
 
 UInputAction* UInputDataAsset::FindInputActionByTag(const FGameplayTag& SpecificTag) const

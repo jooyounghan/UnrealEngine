@@ -3,23 +3,23 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Character.h"
-#include "ICharacter.generated.h"
+#include "Character/ICreature.h"
+#include "IPlayer.generated.h"
 
 UCLASS()
-class PORTFOLIO_API AICharacter : public ACharacter
+class PORTFOLIO_API AIPlayer : public AICreature
 {
 	GENERATED_BODY()
-
+	
 public:
 	// Sets default values for this character's properties
-	AICharacter();
+	AIPlayer();
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -32,5 +32,4 @@ public:
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> CameraComponent;
-
 };

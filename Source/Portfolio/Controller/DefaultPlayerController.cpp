@@ -1,14 +1,14 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DefaultPlayerController.h"
+#include "Controller/DefaultPlayerController.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
 
-#include "DefaultAssetManager.h"
-#include "Data/InputDataAsset.h"
-#include "DefaultGamePlayTags.h"
+#include "Data/DefaultAssetManager.h"
+#include "Data/Asset/InputDataAsset.h"
+#include "Util/DefaultGamePlayTags.h"
 
 ADefaultPlayerController::ADefaultPlayerController(const FObjectInitializer& ObjectInitializer)
 	: APlayerController(ObjectInitializer)

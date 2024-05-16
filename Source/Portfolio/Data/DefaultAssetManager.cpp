@@ -1,8 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "DefaultAssetManager.h"
-#include "DefaultGamePlayTags.h"
+#include "Data/DefaultAssetManager.h"
+#include "Util/DefaultGamePlayTags.h"
 
 UDefaultAssetManager::UDefaultAssetManager()
 	: Super()
