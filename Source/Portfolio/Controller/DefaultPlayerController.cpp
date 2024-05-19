@@ -10,6 +10,8 @@
 #include "Data/Asset/InputDataAsset.h"
 #include "Util/DefaultGamePlayTags.h"
 
+#include "Character/IPlayer.h"
+
 ADefaultPlayerController::ADefaultPlayerController(const FObjectInitializer& ObjectInitializer)
 	: APlayerController(ObjectInitializer)
 {
@@ -38,8 +40,12 @@ void ADefaultPlayerController::SetupInputComponent()
 		{
 			auto InputActioinMove = InputData->FindInputActionByTag(GamePlayTags::InputActionMove);
 			auto InputActioinTurn = InputData->FindInputActionByTag(GamePlayTags::InputActionTurn);
+			auto InputActioinJump = InputData->FindInputActionByTag(GamePlayTags::InputActionJump);
+			auto InputActioinAttack = InputData->FindInputActionByTag(GamePlayTags::InputActionAttack);
 			EnhancedInputComponent->BindAction(InputActioinMove, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
 			EnhancedInputComponent->BindAction(InputActioinTurn, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
+			EnhancedInputComponent->BindAction(InputActioinJump, ETriggerEvent::Triggered, this, &ThisClass::InputJump);
+			EnhancedInputComponent->BindAction(InputActioinAttack, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
 		}
 	}
 }
@@ -63,4 +69,16 @@ void ADefaultPlayerController::InputTurn(const FInputActionValue& InputValue)
 	AddYawInput(AngleVector.X);
 	AddPitchInput(AngleVector.Y);
 
+}
+
+void ADefaultPlayerController::InputJump(const FInputActionValue& InputValue)
+{
+	if (AIPlayer* DefaultPlayer = Cast<AIPlayer>(GetPawn()))
+	{
+		DefaultPlayer->Jump();
+	}
+}
+
+void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
+{
 }

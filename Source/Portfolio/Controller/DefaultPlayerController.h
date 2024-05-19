@@ -23,4 +23,6 @@ protected:
 private:
 	void InputMove(const struct FInputActionValue& InputValue);
 	void InputTurn(const struct FInputActionValue& InputValue);
+	void InputJump(const struct FInputActionValue& InputValue);
+	void InputAttack(const struct FInputActionValue& InputValue);
 };
