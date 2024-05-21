@@ -4,6 +4,7 @@
 #include "Animation/DefaultPlayerAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Character/ICreature.h"
+#include "Animation/AnimMontage.h"
 
 UDefaultPlayerAnimInstance::UDefaultPlayerAnimInstance(const FObjectInitializer& ObjectInitializer)
 	: Super(ObjectInitializer)

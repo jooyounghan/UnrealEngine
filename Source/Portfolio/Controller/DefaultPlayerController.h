@@ -7,6 +7,7 @@
 #include "DefaultPlayerController.generated.h"
 
 struct FInputActionValue;
+class UAnimMontage;
 
 UCLASS()
 class PORTFOLIO_API ADefaultPlayerController : public APlayerController

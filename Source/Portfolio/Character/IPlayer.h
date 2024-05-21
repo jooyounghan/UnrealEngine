@@ -32,4 +32,8 @@ public:
 
 	UPROPERTY(Category = Character, VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> CameraComponent;
+
+public:
+	UPROPERTY(Category = Animation, EditAnywhere)
+	TObjectPtr<UAnimMontage> AttackAnimMontage;
 };

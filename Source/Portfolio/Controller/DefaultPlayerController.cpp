@@ -81,4 +81,10 @@ void ADefaultPlayerController::InputJump(const FInputActionValue& InputValue)
 
 void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
 {
+	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Black, TEXT("Attack"));
+	if (AIPlayer* DefaultPlayer = Cast<AIPlayer>(GetPawn()))
+	{
+		if (DefaultPlayer->AttackAnimMontage)
+			DefaultPlayer->PlayAnimMontage(DefaultPlayer->AttackAnimMontage, 1.0f, TEXT("Attack"));
+	}
 }
