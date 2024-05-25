@@ -27,7 +27,5 @@ void UDefaultPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 
 	Velocity = CharacterMovement->Velocity;
 	GroundSpeed = Velocity.Size2D();
-
-	bShouldMove = GroundSpeed > 3.f && !CharacterMovement->GetCurrentAcceleration().IsNearlyZero(1E-3);
-	bIsFalling = CharacterMovement->IsFalling();
+	bShouldMove = GroundSpeed > 3.f;
 }

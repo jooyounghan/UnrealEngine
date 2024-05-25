@@ -5,6 +5,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "NiagaraSystem.h"
+#include "NiagaraFunctionLibrary.h"
+#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 #include "Data/DefaultAssetManager.h"
 #include "Data/Asset/InputDataAsset.h"
@@ -15,7 +18,8 @@
 ADefaultPlayerController::ADefaultPlayerController(const FObjectInitializer& ObjectInitializer)
 	: APlayerController(ObjectInitializer)
 {
-
+	bShowMouseCursor = true;
+	DefaultMouseCursor = EMouseCursor::GrabHand;
 }
 
 void ADefaultPlayerController::BeginPlay()
@@ -38,19 +42,29 @@ void ADefaultPlayerController::SetupInputComponent()
 	{
 		if (auto* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent))
 		{
-			auto InputActioinMove = InputData->FindInputActionByTag(GamePlayTags::InputActionMove);
-			auto InputActioinTurn = InputData->FindInputActionByTag(GamePlayTags::InputActionTurn);
-			auto InputActioinJump = InputData->FindInputActionByTag(GamePlayTags::InputActionJump);
-			auto InputActioinAttack = InputData->FindInputActionByTag(GamePlayTags::InputActionAttack);
-			EnhancedInputComponent->BindAction(InputActioinMove, ETriggerEvent::Triggered, this, &ThisClass::InputMove);
-			EnhancedInputComponent->BindAction(InputActioinTurn, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
-			EnhancedInputComponent->BindAction(InputActioinJump, ETriggerEvent::Triggered, this, &ThisClass::InputJump);
-			EnhancedInputComponent->BindAction(InputActioinAttack, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
+			auto InputActionMoveByKey = InputData->FindInputActionByTag(GamePlayTags::InputActionMoveByKey);
+			auto InputActionMoveByMouse = InputData->FindInputActionByTag(GamePlayTags::InputActionMoveByMouse);
+			auto InputActionTurn = InputData->FindInputActionByTag(GamePlayTags::InputActionTurn);
+			auto InputActioAttack = InputData->FindInputActionByTag(GamePlayTags::InputActionAttack);
+
+			auto InputAdditiveCtrl = InputData->FindInputActionByTag(GamePlayTags::InputAdditiveCtrl);
+
+			EnhancedInputComponent->BindAction(InputActionMoveByKey, ETriggerEvent::Triggered, this, &ThisClass::InputMoveByKey);
+			EnhancedInputComponent->BindAction(InputActionTurn, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
+			EnhancedInputComponent->BindAction(InputActioAttack, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
+
+			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Started, this, &ThisClass::OnMouseMoveStarted);
+			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Triggered, this, &ThisClass::OnMouseMoveTriggered);
+			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Completed, this, &ThisClass::OnMouseMoveReleased);
+			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Canceled, this, &ThisClass::OnMouseMoveReleased);
+
+			EnhancedInputComponent->BindAction(InputAdditiveCtrl, ETriggerEvent::Started, this, &ThisClass::InputAddtiveCtrl);
+			EnhancedInputComponent->BindAction(InputAdditiveCtrl, ETriggerEvent::Completed, this, &ThisClass::InputAddtiveCtrl);
 		}
 	}
 }
 
-void ADefaultPlayerController::InputMove(const FInputActionValue& InputValue)
+void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValue)
 {
 	FVector2D MovementVector = InputValue.Get<FVector2D>();
 	MovementVector.Normalize();
@@ -63,28 +77,75 @@ void ADefaultPlayerController::InputMove(const FInputActionValue& InputValue)
 	GetPawn()->AddMovementInput(RightVector, MovementVector.Y);
 }
 
-void ADefaultPlayerController::InputTurn(const FInputActionValue& InputValue)
+void ADefaultPlayerController::InputZoom(const FInputActionValue& InputValue)
 {
-	FVector2D AngleVector = InputValue.Get<FVector2D>();
-	AddYawInput(AngleVector.X);
-	AddPitchInput(AngleVector.Y);
 
 }
 
-void ADefaultPlayerController::InputJump(const FInputActionValue& InputValue)
+void ADefaultPlayerController::InputTurn(const FInputActionValue& InputValue)
 {
-	if (AIPlayer* DefaultPlayer = Cast<AIPlayer>(GetPawn()))
+	if (bIsCtrlPressed)
 	{
-		DefaultPlayer->Jump();
+		FVector2D AngleVector = InputValue.Get<FVector2D>();
+		AddYawInput(AngleVector.X);
+		AddPitchInput(AngleVector.Y);
 	}
+
 }
 
 void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
 {
-	GEngine->AddOnScreenDebugMessage(0, 5.f, FColor::Black, TEXT("Attack"));
 	if (AIPlayer* DefaultPlayer = Cast<AIPlayer>(GetPawn()))
 	{
 		if (DefaultPlayer->AttackAnimMontage)
-			DefaultPlayer->PlayAnimMontage(DefaultPlayer->AttackAnimMontage, 1.0f, TEXT("Attack"));
+		{
+			const FString AttackFormatter = FString(TEXT("Attack_{0}"));
+			const FString AttackFormatted = FString::Format(*AttackFormatter, { rand() % DefaultPlayer->AttackAnimMontage->GetNumSections() });
+			DefaultPlayer->PlayAnimMontage(DefaultPlayer->AttackAnimMontage, 1.0f, *AttackFormatted);
+		}
 	}
+}
+
+void ADefaultPlayerController::OnMouseMoveStarted()
+{
+	StopMovement();
+}
+
+void ADefaultPlayerController::OnMouseMoveTriggered()
+{
+	MoveMousePressedTime += GetWorld()->GetDeltaSeconds();
+
+	FHitResult Hit;
+	bool bHitSuccess = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, true, Hit);
+
+	if (bHitSuccess)
+	{
+		CachedDestination = Hit.Location;
+	}
+
+	APawn* ControlledPawn = GetPawn();
+	if (ControlledPawn)
+	{
+		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
+		ControlledPawn->AddMovementInput(WorldDirection);
+	}
+}
+
+void ADefaultPlayerController::OnMouseMoveReleased()
+{
+	if (MoveMousePressedTime < MoveMousePresssedTreshold)
+	{
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination);
+	}
+	MoveMousePressedTime = 0.f;
+}
+
+void ADefaultPlayerController::InputAddtiveCtrl(const FInputActionValue& InputValue)
+{
+	GEngine->AddOnScreenDebugMessage(0, 0.5f, FColor::Cyan, TEXT("CTRL"));
+	
+	const bool bCurrentCtrlPressed = bIsCtrlPressed;
+	bIsCtrlPressed = !bCurrentCtrlPressed;
+	bShowMouseCursor = bCurrentCtrlPressed;
 }

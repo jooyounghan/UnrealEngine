@@ -37,7 +37,4 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bShouldMove = false;
-
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsFalling = false;
 };

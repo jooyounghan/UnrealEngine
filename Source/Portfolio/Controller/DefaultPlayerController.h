@@ -8,6 +8,7 @@
 
 struct FInputActionValue;
 class UAnimMontage;
+class UNiagaraSystem;
 
 UCLASS()
 class PORTFOLIO_API ADefaultPlayerController : public APlayerController
@@ -21,9 +22,32 @@ protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
 
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	bool bIsCtrlPressed = false;
+
+protected:
+	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadOnly)
+	float MoveMousePresssedTreshold = 0.3f;
+
+	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadWrite)
+	TObjectPtr<UNiagaraSystem> FXCursor;
+
+protected:
+	FVector CachedDestination = FVector::ZeroVector;
+	float MoveMousePressedTime = 0.f;
+
 private:
-	void InputMove(const struct FInputActionValue& InputValue);
+	void InputMoveByKey(const struct FInputActionValue& InputValue);
+	void InputZoom(const struct FInputActionValue& InputValue);
 	void InputTurn(const struct FInputActionValue& InputValue);
-	void InputJump(const struct FInputActionValue& InputValue);
 	void InputAttack(const struct FInputActionValue& InputValue);
+
+private:
+	void OnMouseMoveStarted();
+	void OnMouseMoveTriggered();
+	void OnMouseMoveReleased();
+
+private:
+	void InputAddtiveCtrl(const struct FInputActionValue& InputValue);
 };
