@@ -6,7 +6,7 @@
 #include "Animation/AnimInstance.h"
 #include "DefaultPlayerAnimInstance.generated.h"
 
-class AICreature;
+class ACreature;
 class UCharacterMovementComponent;
 
 UCLASS()
@@ -23,7 +23,7 @@ public:
 
 protected:
 	UPROPERTY()
-	TObjectPtr<AICreature> Creature;
+	TObjectPtr<ACreature> Creature;
 
 	UPROPERTY()
 	TObjectPtr<UCharacterMovementComponent> CharacterMovement;

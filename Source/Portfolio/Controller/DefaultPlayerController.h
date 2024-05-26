@@ -9,6 +9,8 @@
 struct FInputActionValue;
 class UAnimMontage;
 class UNiagaraSystem;
+class ACreature;
+class AUnitEnemy;
 
 UCLASS()
 class PORTFOLIO_API ADefaultPlayerController : public APlayerController
@@ -21,10 +23,10 @@ public:
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
+	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
-	UPROPERTY(BlueprintReadOnly)
-	bool bIsCtrlPressed = false;
+	void TraceMouseHit();
 
 protected:
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadOnly)
@@ -36,6 +38,24 @@ protected:
 protected:
 	FVector CachedDestination = FVector::ZeroVector;
 	float MoveMousePressedTime = 0.f;
+
+protected:
+	UPROPERTY(Category = Input, BlueprintReadOnly)
+	float ZoomSpeed = 20.f;
+
+protected:
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	TObjectPtr<ACreature> TargetedCreature;
+
+protected:
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	TObjectPtr<AUnitEnemy> CursorTargetingCreature;
+
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	TObjectPtr<AUnitEnemy> CtrlTargetingEnemy;
+
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	float EnemyDistance = 10000.f;
 
 private:
 	void InputMoveByKey(const struct FInputActionValue& InputValue);
@@ -49,5 +69,7 @@ private:
 	void OnMouseMoveReleased();
 
 private:
-	void InputAddtiveCtrl(const struct FInputActionValue& InputValue);
+	void OnCtrlTargetingStarted();
+	void OnCtrlTargetingTriggered();
+	void OnCtrlTargetingReleased();
 };

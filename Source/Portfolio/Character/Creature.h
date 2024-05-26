@@ -4,16 +4,17 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
-#include "ICreature.generated.h"
+#include "Interface/TargetingInterface.h"
+#include "Creature.generated.h"
 
 UCLASS()
-class PORTFOLIO_API AICreature : public ACharacter
+class PORTFOLIO_API ACreature : public ACharacter, public ITargetingInterface
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AICreature();
+	ACreature();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,4 +27,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+public:
+	virtual void Target() override;
+	virtual void UnTarget() override;
 };

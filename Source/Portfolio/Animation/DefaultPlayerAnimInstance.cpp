@@ -3,7 +3,7 @@
 
 #include "Animation/DefaultPlayerAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Character/ICreature.h"
+#include "Character/Creature.h"
 #include "Animation/AnimMontage.h"
 
 UDefaultPlayerAnimInstance::UDefaultPlayerAnimInstance(const FObjectInitializer& ObjectInitializer)
@@ -13,7 +13,7 @@ UDefaultPlayerAnimInstance::UDefaultPlayerAnimInstance(const FObjectInitializer&
 
 void UDefaultPlayerAnimInstance::NativeInitializeAnimation()
 {
-	Creature = Cast<AICreature>(GetOwningActor());
+	Creature = Cast<ACreature>(GetOwningActor());
 	if (Creature)
 	{
 		CharacterMovement = Creature->GetCharacterMovement();
