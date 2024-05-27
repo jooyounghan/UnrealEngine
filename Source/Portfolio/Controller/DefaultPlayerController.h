@@ -10,6 +10,7 @@ struct FInputActionValue;
 class UAnimMontage;
 class UNiagaraSystem;
 class ACreature;
+class AUnitPlayer;
 class AUnitEnemy;
 
 UCLASS()
@@ -26,7 +27,21 @@ protected:
 	virtual void PlayerTick(float DeltaTime) override;
 
 protected:
+	virtual void StopMovement();
+
+protected:
 	void TraceMouseHit();
+	void ShowTargeted();
+	void ChaseAndAttackTarget();
+
+protected:
+	void SetTargetToAttack(ACreature* Target);
+	void ResetTargetToAttack();
+	inline void SpendAttackable() { bIsAttackable = false; }
+
+protected:
+	bool IsNearForAttacking(const double& Distance);
+	bool bIsAttackable = false;
 
 protected:
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadOnly)
@@ -38,14 +53,18 @@ protected:
 protected:
 	FVector CachedDestination = FVector::ZeroVector;
 	float MoveMousePressedTime = 0.f;
+	float ZoomSpeed = 20.f;
 
 protected:
-	UPROPERTY(Category = Input, BlueprintReadOnly)
-	float ZoomSpeed = 20.f;
+	UPROPERTY(Category = Character, BlueprintReadOnly)
+	TObjectPtr<AUnitPlayer> PossesedCharacter;
 
 protected:
 	UPROPERTY(Category = Target, BlueprintReadOnly)
 	TObjectPtr<ACreature> TargetedCreature;
+
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	TObjectPtr<ACreature> TargetToAttack;
 
 protected:
 	UPROPERTY(Category = Target, BlueprintReadOnly)

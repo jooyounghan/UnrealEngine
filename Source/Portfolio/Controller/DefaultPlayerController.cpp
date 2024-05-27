@@ -35,6 +35,8 @@ void ADefaultPlayerController::BeginPlay()
 			SubSystem->AddMappingContext(InputData->InputMappingContext, 0);
 		}
 	}
+
+	PossesedCharacter = Cast<AUnitPlayer>(GetPawn());
 }
 
 void ADefaultPlayerController::SetupInputComponent()
@@ -54,7 +56,7 @@ void ADefaultPlayerController::SetupInputComponent()
 
 			EnhancedInputComponent->BindAction(InputActionMoveByKey, ETriggerEvent::Triggered, this, &ThisClass::InputMoveByKey);
 			EnhancedInputComponent->BindAction(InputActionTurn, ETriggerEvent::Triggered, this, &ThisClass::InputTurn);
-			EnhancedInputComponent->BindAction(InputActionAttack, ETriggerEvent::Triggered, this, &ThisClass::InputAttack);
+			EnhancedInputComponent->BindAction(InputActionAttack, ETriggerEvent::Started, this, &ThisClass::InputAttack);
 			EnhancedInputComponent->BindAction(InputActionZoom, ETriggerEvent::Triggered, this, &ThisClass::InputZoom);
 
 
@@ -75,6 +77,19 @@ void ADefaultPlayerController::PlayerTick(float DeltaTime)
 {
 	Super::PlayerTick(DeltaTime);
 	TraceMouseHit();
+	ShowTargeted();
+	ChaseAndAttackTarget();
+}
+
+void ADefaultPlayerController::StopMovement()
+{
+	Super::StopMovement();
+	ResetTargetToAttack();
+
+	if (PossesedCharacter)
+	{
+		PossesedCharacter->StopAnimMontage();
+	}
 }
 
 void ADefaultPlayerController::TraceMouseHit()
@@ -93,13 +108,76 @@ void ADefaultPlayerController::TraceMouseHit()
 			Creature->Target();
 			CursorTargetingCreature = Creature;
 
-			DrawDebugSphere(GetWorld(), CursorTargetingCreature->GetActorLocation(), 100.f, 10, FColor::Red);
+			DrawDebugSphere(GetWorld(), CursorTargetingCreature->GetActorLocation(), 100.f, 10, FColor::Cyan);
 		}
 		else
 		{
-			DrawDebugSphere(GetWorld(), CursorTargetingCreature->GetActorLocation(), 100.f, 10, FColor::Red);
+			DrawDebugSphere(GetWorld(), CursorTargetingCreature->GetActorLocation(), 100.f, 10, FColor::Cyan);
 		}
 	}
+	else
+	{
+		CursorTargetingCreature = nullptr;
+	}
+}
+
+void ADefaultPlayerController::ShowTargeted()
+{
+	if (TargetedCreature)
+	{
+		DrawDebugSphere(GetWorld(), TargetedCreature->GetActorLocation(), 100.f, 10, FColor::Red);
+	}
+
+	if (TargetToAttack)
+	{
+		DrawDebugSphere(GetWorld(), TargetedCreature->GetActorLocation(), 100.f, 20, FColor::Magenta);
+	}
+}
+
+void ADefaultPlayerController::ChaseAndAttackTarget()
+{
+	if (PossesedCharacter && TargetToAttack)
+	{
+		FVector Direction = TargetToAttack->GetActorLocation() - PossesedCharacter->GetActorLocation();
+		
+		if (IsNearForAttacking(Direction.Length()))
+		{
+			if (bIsAttackable && PossesedCharacter->AttackAnimMontage)
+			{
+				SpendAttackable();
+				const FString AttackFormatter = FString(TEXT("Attack_{0}"));
+				const FString AttackFormatted = FString::Format(*AttackFormatter, { rand() % PossesedCharacter->AttackAnimMontage->GetNumSections() });
+				PossesedCharacter->PlayAnimMontage(PossesedCharacter->AttackAnimMontage, 1.0f, *AttackFormatted);
+			}
+		}
+		else
+		{
+			PossesedCharacter->AddMovementInput(Direction.GetSafeNormal());
+		}
+
+
+		//if (AUnitPlayer* DefaultPlayer = Cast<AUnitPlayer>(GetPawn()))
+		//{
+
+		//}
+	}
+}
+
+void ADefaultPlayerController::SetTargetToAttack(ACreature* Target)
+{
+	TargetToAttack = Target;
+	bIsAttackable = true;
+}
+
+void ADefaultPlayerController::ResetTargetToAttack()
+{
+	TargetToAttack = nullptr;
+	SpendAttackable();
+}
+
+bool ADefaultPlayerController::IsNearForAttacking(const double& Distance)
+{
+	return Distance < 250.0;
 }
 
 void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValue)
@@ -107,26 +185,25 @@ void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValu
 	StopMovement();
 	FVector2D MovementVector = InputValue.Get<FVector2D>();
 	MovementVector.Normalize();
-	AUnitPlayer* UnitPlayer = Cast<AUnitPlayer>(GetPawn());
-	
-	if (UnitPlayer)
+
+	if (PossesedCharacter)
 	{
-		FRotator Rotator = UnitPlayer->CameraComponent->GetComponentRotation();
+		FRotator Rotator = PossesedCharacter->CameraComponent->GetComponentRotation();
 		FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0, Rotator.Yaw, 0));
 		FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0, Rotator.Yaw, 0));
 
-		UnitPlayer->AddMovementInput(ForwardVector, MovementVector.X);
-		UnitPlayer->AddMovementInput(RightVector, MovementVector.Y);
+		PossesedCharacter->AddMovementInput(ForwardVector, MovementVector.X);
+		PossesedCharacter->AddMovementInput(RightVector, MovementVector.Y);
 	}
 }
 
 void ADefaultPlayerController::InputZoom(const FInputActionValue& InputValue)
 {
-	if (AUnitPlayer* DefaultPlayer = Cast<AUnitPlayer>(GetPawn()))
+	if (PossesedCharacter)
 	{
 		float ZoomValue = InputValue.Get<float>() * ZoomSpeed;
-		const float& CurrentSpringArmLength = DefaultPlayer->GetSpringArmLength();
-		DefaultPlayer->SetSringArmLength(CurrentSpringArmLength - ZoomValue);
+		const float& CurrentSpringArmLength = PossesedCharacter->GetSpringArmLength();
+		PossesedCharacter->SetSringArmLength(CurrentSpringArmLength - ZoomValue);
 	}
 }
 
@@ -139,19 +216,27 @@ void ADefaultPlayerController::InputTurn(const FInputActionValue& InputValue)
 
 void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
 {
+	bool bIsTargeted = false;
 
-
-
-
-
-	if (AUnitPlayer* DefaultPlayer = Cast<AUnitPlayer>(GetPawn()))
+	if (CtrlTargetingEnemy != nullptr)
 	{
-		if (DefaultPlayer->AttackAnimMontage)
-		{
-			const FString AttackFormatter = FString(TEXT("Attack_{0}"));
-			const FString AttackFormatted = FString::Format(*AttackFormatter, { rand() % DefaultPlayer->AttackAnimMontage->GetNumSections() });
-			DefaultPlayer->PlayAnimMontage(DefaultPlayer->AttackAnimMontage, 1.0f, *AttackFormatted);
-		}
+		TargetedCreature = CtrlTargetingEnemy;
+		bIsTargeted = true;
+	}
+	else if (CursorTargetingCreature != nullptr)
+	{
+		TargetedCreature = CursorTargetingCreature;
+		bIsTargeted = true;
+	}
+	else;
+
+	if (bIsTargeted)
+	{
+		SetTargetToAttack(TargetedCreature);
+	}
+	else
+	{
+		ResetTargetToAttack();
 	}
 }
 
@@ -172,11 +257,10 @@ void ADefaultPlayerController::OnMouseMoveTriggered()
 		CachedDestination = Hit.Location;
 	}
 
-	APawn* ControlledPawn = GetPawn();
-	if (ControlledPawn)
+	if (PossesedCharacter)
 	{
-		FVector WorldDirection = (CachedDestination - ControlledPawn->GetActorLocation()).GetSafeNormal();
-		ControlledPawn->AddMovementInput(WorldDirection);
+		FVector WorldDirection = (CachedDestination - PossesedCharacter->GetActorLocation()).GetSafeNormal();
+		PossesedCharacter->AddMovementInput(WorldDirection);
 	}
 }
 
