@@ -1,22 +1,60 @@
-#include "State/IdleState.h"
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "IdleState.h"
+#include "Character/Creature.h"
 
 UIdleState::UIdleState()
+	: IStateInterface()
 {
-	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UIdleState::BeginPlay()
+
+void UIdleState::ExitState(ACreature* Creature)
 {
-	Super::BeginPlay();	
 }
 
-void UIdleState::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UIdleState::EnterState(ACreature* Creature)
 {
-	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
+	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Idle"));
 }
 
-ECreatureState UIdleState::GetState() { return ECreatureState::Idle; };
+ECreatureState UIdleState::GetState()
+{
+	return ECreatureState::Idle;
+}
 
-bool UIdleState::IsTransitable(ECreatureState NewState) { return false; }
-void UIdleState::HandleMove(const FVector& Location) {}
-void UIdleState::HandleAttack(const FVector& Location) {}
+bool UIdleState::IsTransitable(ECreatureState NewState)
+{
+	return NewState == ECreatureState::CombatReady;
+}
+
+void UIdleState::HandleMove(
+	ACreature* Creature,
+	ADefaultPlayerController* Controller,
+	const FVector2D& Movement, 
+	const FVector& ForwardVector, 
+	const FVector& RightVector
+)
+{
+	DefaultHandleMove(Creature, Controller, Movement, ForwardVector, RightVector);
+}
+
+void UIdleState::HandleMoveWithDirection(
+	ACreature* Creature, 
+	ADefaultPlayerController* Controller, 
+	const FVector& Direction)
+{
+	DefaultHandleMove(Creature, Controller, Direction);
+}
+
+void UIdleState::HandleAttack(
+	ACreature* Creature,
+	ADefaultPlayerController* Controller
+)
+{
+	ACreature* TargetToAttack = Creature->GetTargetToAttack();
+	if (TargetToAttack)
+	{
+
+	}
+}

@@ -1,34 +1,48 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/ActorComponent.h"
+#include "UObject/NoExportTypes.h"
 #include "Interface/StateInterface.h"
 #include "CombatingState.generated.h"
 
-
-//UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 UCLASS()
-class PORTFOLIO_API UCombatingState : public UActorComponent, public IStateInterface
+class PORTFOLIO_API UCombatingState : public UObject, public IStateInterface
 {
 	GENERATED_BODY()
-
-public:	
-	// Sets default values for this component's properties
+	
+private:
 	UCombatingState();
 
-protected:
-	// Called when the game starts
-	virtual void BeginPlay() override;
-
-public:	
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+public:
+	virtual void ExitState(ACreature* Creature) override;
+	virtual void EnterState(ACreature* Creature) override;
 
 public:
 	virtual ECreatureState GetState() override;
 
 public:
 	virtual bool IsTransitable(ECreatureState NewState) override;
-	virtual void HandleMove(const FVector& Location) override;
-	virtual void HandleAttack(const FVector& Location) override;
+
+public:
+	virtual void HandleMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		const FVector2D& Movement,
+		const FVector& ForwardVector,
+		const FVector& RightVector
+	) override;
+
+	virtual void HandleMoveWithDirection(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller, 
+		const FVector& Direction
+	) override;
+
+public:
+	virtual void HandleAttack(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller
+	) override;
 };

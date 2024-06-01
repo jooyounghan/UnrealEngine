@@ -7,6 +7,8 @@
 #include "Interface/TargetingInterface.h"
 #include "Creature.generated.h"
 
+class IStateInterface;
+
 UCLASS()
 class PORTFOLIO_API ACreature : public ACharacter, public ITargetingInterface
 {
@@ -20,6 +22,9 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+public:
+	IStateInterface* CharacterState;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -30,4 +35,33 @@ public:
 public:
 	virtual void Target() override;
 	virtual void UnTarget() override;
+
+protected:
+	UPROPERTY(Category = Target, VisibleAnywhere)
+	TObjectPtr<ACreature> TargetToAttack;
+
+public:
+	UFUNCTION()
+	void SetTargetToAttack(ACreature* Target);
+	UFUNCTION()
+	void ResetTargetToAttack();
+	UFUNCTION()
+	inline ACreature* GetTargetToAttack() { return TargetToAttack; }
+
+public:
+	UPROPERTY(Category = Target, BlueprintReadOnly)
+	float MaxEnemyFindDistance = 10000.f;
+
+public:
+	bool IsNearForAttacking(const double& Distance);
+
+protected:
+	bool bIsAttackable = false;
+
+public:
+	void DefaultAttack();
+
+public:
+	UPROPERTY(Category = Animation, EditAnywhere)
+	TObjectPtr<UAnimMontage> AttackAnimMontage;
 };

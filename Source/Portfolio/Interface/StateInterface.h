@@ -6,6 +6,10 @@
 #include "UObject/Interface.h"
 #include "StateInterface.generated.h"
 
+class ACreature;
+class ADefaultPlayerController;
+class UCharacterStateSubsystem;
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UStateInterface : public UInterface
@@ -17,7 +21,6 @@ UENUM(BlueprintType)
 enum class ECreatureState : uint8
 {
 	Idle,
-	Move,
 	CombatReady,
 	Combating
 };
@@ -28,11 +31,57 @@ class PORTFOLIO_API IStateInterface
 {
 	GENERATED_BODY()
 
+protected:
+	UCharacterStateSubsystem* StateSubsystem;
+
 public:
+	inline void SetStateSubsystem(UCharacterStateSubsystem* StateSubsystemIn) { StateSubsystem = StateSubsystemIn; }
+
+public:
+	UFUNCTION()
 	virtual ECreatureState GetState() = 0;
 
 public:
 	virtual bool IsTransitable(ECreatureState NewState) = 0;
-	virtual void HandleMove(const FVector& Location) = 0;
-	virtual void HandleAttack(const FVector& Location) = 0;
+
+public:
+	virtual void ExitState(ACreature* Creature) = 0;
+
+	virtual void EnterState(ACreature* Creature) = 0;
+
+public:
+	virtual void HandleMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		const FVector2D& Movement,
+		const FVector& ForwardVector,
+		const FVector& RightVector
+	) = 0;
+
+	virtual void HandleMoveWithDirection(
+		ACreature* Creature, 
+		ADefaultPlayerController* Controller, 
+		const FVector& Direction
+	) = 0;
+
+public:
+	virtual void HandleAttack(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller
+	) = 0;
+
+public:
+	void DefaultHandleMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		const FVector2D& Movement,
+		const FVector& ForwardVector,
+		const FVector& RightVector
+	);
+public:
+	void DefaultHandleMove(
+		ACreature* Creature, 
+		ADefaultPlayerController* Controller,
+		const FVector& Direction
+	);
 };

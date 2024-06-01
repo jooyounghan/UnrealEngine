@@ -2,4 +2,7 @@
 
 #pragma once
 
+DECLARE_LOG_CATEGORY_EXTERN(LogLocalVariable, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogLocalVariableNull, Fatal, All);
+DECLARE_LOG_CATEGORY_EXTERN(LogStateLoad, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(LogAssetLoad, Log, All);

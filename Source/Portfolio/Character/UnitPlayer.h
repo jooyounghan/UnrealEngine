@@ -43,11 +43,10 @@ public:
 	UFUNCTION()
 	void SetSringArmLength(const float& Length);
 
+protected:
+	void ShowTargeted();
+
 public:
 	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<class UCameraComponent> CameraComponent;
-
-public:
-	UPROPERTY(Category = Animation, EditAnywhere)
-	TObjectPtr<UAnimMontage> AttackAnimMontage;
 };

@@ -3,4 +3,7 @@
 
 #include "Log/LogChannel.h"
 
+DEFINE_LOG_CATEGORY(LogLocalVariable);
+DEFINE_LOG_CATEGORY(LogLocalVariableNull);
+DEFINE_LOG_CATEGORY(LogStateLoad);
 DEFINE_LOG_CATEGORY(LogAssetLoad);

@@ -26,22 +26,17 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void PlayerTick(float DeltaTime) override;
 
-protected:
+public:
 	virtual void StopMovement();
 
 protected:
+	void ShowControllerTargeting();
+
+protected:
 	void TraceMouseHit();
-	void ShowTargeted();
-	void ChaseAndAttackTarget();
 
 protected:
-	void SetTargetToAttack(ACreature* Target);
-	void ResetTargetToAttack();
-	inline void SpendAttackable() { bIsAttackable = false; }
-
-protected:
-	bool IsNearForAttacking(const double& Distance);
-	bool bIsAttackable = false;
+	UCharacterStateSubsystem* StateSubsystem;
 
 protected:
 	UPROPERTY(Category = Input, EditAnywhere, BlueprintReadOnly)
@@ -63,18 +58,12 @@ protected:
 	UPROPERTY(Category = Target, BlueprintReadOnly)
 	TObjectPtr<ACreature> TargetedCreature;
 
-	UPROPERTY(Category = Target, BlueprintReadOnly)
-	TObjectPtr<ACreature> TargetToAttack;
-
 protected:
-	UPROPERTY(Category = Target, BlueprintReadOnly)
-	TObjectPtr<AUnitEnemy> CursorTargetingCreature;
+	UPROPERTY(Category = Target, VisibleAnywhere)
+	TObjectPtr<ACreature> CursorTargetingCreature;
 
-	UPROPERTY(Category = Target, BlueprintReadOnly)
-	TObjectPtr<AUnitEnemy> CtrlTargetingEnemy;
-
-	UPROPERTY(Category = Target, BlueprintReadOnly)
-	float EnemyDistance = 10000.f;
+	UPROPERTY(Category = Target, VisibleAnywhere)
+	TObjectPtr<ACreature> CtrlTargetingEnemy;
 
 private:
 	void InputMoveByKey(const struct FInputActionValue& InputValue);

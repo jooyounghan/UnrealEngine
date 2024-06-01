@@ -45,7 +45,7 @@ void AUnitPlayer::BeginPlay()
 void AUnitPlayer::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
+	ShowTargeted();
 }
 
 // Called to bind functionality to input
@@ -60,3 +60,10 @@ void AUnitPlayer::SetSringArmLength(const float& Length)
 	SpringArmComponent->TargetArmLength = std::max(std::min(MaxSpringArmLength, Length), MinSpringArmLength);
 }
 
+void AUnitPlayer::ShowTargeted()
+{
+	if (TargetToAttack)
+	{
+		DrawDebugSphere(GetWorld(), TargetToAttack->GetActorLocation(), 150.f, 15, FColor::Magenta);
+	}
+}
