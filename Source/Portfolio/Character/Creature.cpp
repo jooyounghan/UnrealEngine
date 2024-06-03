@@ -35,10 +35,9 @@ void ACreature::UnTarget()
 	bIsTargeted = false;
 }
 
-bool ACreature::IsNearForAttacking(const double& Distance)
+bool ACreature::IsNearForAttacking()
 {
-	// TODO : 착용 무기에 따라 변경
-	return Distance < 250.0;
+	return TargetToAttack != nullptr ? (TargetToAttack->GetActorLocation() - GetActorLocation()).Length() < 250.f : false;
 }
 
 void ACreature::DefaultAttack()

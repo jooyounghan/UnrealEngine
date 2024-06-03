@@ -18,6 +18,11 @@ void UCharacterStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	StateEnumToClass.Add(ECreatureState::Idle, NewObject<UIdleState>(this));
 	StateEnumToClass.Add(ECreatureState::CombatReady, NewObject<UCombatReadyState>(this));
 	StateEnumToClass.Add(ECreatureState::Combating, NewObject<UCombatingState>(this));
+
+	for (auto& StateElem : StateEnumToClass)
+	{
+		StateElem.Value->SetStateSubsystem(this);
+	}
 }
 
 void UCharacterStateSubsystem::Deinitialize()
@@ -32,15 +37,15 @@ void UCharacterStateSubsystem::SetState(ACreature* Creature, ECreatureState NewS
 
 		if (NewStatePtr)
 		{
-			IStateInterface* NewState = NewStatePtr->GetInterface();
-			IStateInterface* CurrentState = Creature->CharacterState;
+			TScriptInterface<IStateInterface> NewState = *NewStatePtr;
+			TScriptInterface<IStateInterface> CurrentState = Creature->CharacterState;
 			if (CurrentState)
 			{
 				if (CurrentState->IsTransitable(NewStateID))
 				{
 					CurrentState->ExitState(Creature);
-					NewState->EnterState(Creature);
 					Creature->CharacterState = NewState;
+					NewState->EnterState(Creature);
 				}
 			}
 			else

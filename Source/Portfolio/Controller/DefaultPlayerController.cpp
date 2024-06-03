@@ -99,7 +99,8 @@ void ADefaultPlayerController::PlayerTick(float DeltaTime)
 
 	ShowControllerTargeting();
 	TraceMouseHit();
-	PossesedCharacter->CharacterState->HandleAttack(PossesedCharacter, this);
+
+	PossesedCharacter->CharacterState->HandleChase(PossesedCharacter, this);
 }
 
 void ADefaultPlayerController::StopMovement()
@@ -197,14 +198,9 @@ void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
 	}
 	else;
 
-	if (bIsTargeted)
-	{
-		PossesedCharacter->SetTargetToAttack(TargetedCreature);
-	}
-	else
-	{
-		PossesedCharacter->ResetTargetToAttack();
-	}
+	PossesedCharacter->CharacterState->HandleAttack(
+		PossesedCharacter, this, bIsTargeted ? TargetedCreature : nullptr
+	);
 }
 
 void ADefaultPlayerController::OnMouseMoveStarted()

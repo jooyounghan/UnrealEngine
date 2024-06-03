@@ -8,17 +8,19 @@
 UCombatReadyState::UCombatReadyState()
 	: IStateInterface()
 {
-
 }
 
 void UCombatReadyState::ExitState(ACreature* Creature)
 {
-	Creature->GetWorldTimerManager().ClearTimer(ToIdleTimerHandle);
+	FTimerManager& WorldTimerManager = Creature->GetWorldTimerManager();
+	WorldTimerManager.ClearTimer(ToIdleTimerHandle);
 }
 
 void UCombatReadyState::EnterState(ACreature* Creature)
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("CombatReady"));
+
+	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Combat Ready"));
+	Creature->GetWorldTimerManager().ClearTimer(ToIdleTimerHandle);
 
 	ToIdleDelegate = FTimerDelegate::CreateUObject(
 		StateSubsystem,
@@ -26,7 +28,6 @@ void UCombatReadyState::EnterState(ACreature* Creature)
 		Creature, ECreatureState::Idle
 	);
 
-	Creature->GetWorldTimerManager().ClearTimer(ToIdleTimerHandle);
 	Creature->GetWorldTimerManager().SetTimer(ToIdleTimerHandle, ToIdleDelegate, 10.f, true);
 }
 
@@ -65,7 +66,14 @@ void UCombatReadyState::HandleMoveWithDirection(
 
 void UCombatReadyState::HandleAttack(
 	ACreature* Creature,
-	ADefaultPlayerController* Controller
+	ADefaultPlayerController* Controller,
+	ACreature* Target
 )
 {
+	Target ? Creature->SetTargetToAttack(Target) : Creature->ResetTargetToAttack();
+
+	if (Creature->IsNearForAttacking())
+	{
+		StateSubsystem->SetState(Creature, ECreatureState::Combating);
+	}
 }

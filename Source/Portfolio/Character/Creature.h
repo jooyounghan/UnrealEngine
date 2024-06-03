@@ -23,7 +23,8 @@ protected:
 	virtual void BeginPlay() override;
 
 public:
-	IStateInterface* CharacterState;
+	UPROPERTY(BlueprintReadOnly)
+	TScriptInterface<IStateInterface> CharacterState;
 
 public:	
 	// Called every frame
@@ -43,8 +44,10 @@ protected:
 public:
 	UFUNCTION()
 	void SetTargetToAttack(ACreature* Target);
+
 	UFUNCTION()
 	void ResetTargetToAttack();
+
 	UFUNCTION()
 	inline ACreature* GetTargetToAttack() { return TargetToAttack; }
 
@@ -53,7 +56,7 @@ public:
 	float MaxEnemyFindDistance = 10000.f;
 
 public:
-	bool IsNearForAttacking(const double& Distance);
+	bool IsNearForAttacking();
 
 protected:
 	bool bIsAttackable = false;

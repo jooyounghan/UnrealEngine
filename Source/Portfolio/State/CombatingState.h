@@ -43,6 +43,7 @@ public:
 public:
 	virtual void HandleAttack(
 		ACreature* Creature,
-		ADefaultPlayerController* Controller
+		ADefaultPlayerController* Controller,
+		ACreature* Target
 	) override;
 };

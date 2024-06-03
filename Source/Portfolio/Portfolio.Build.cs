@@ -24,9 +24,6 @@ public class Portfolio : ModuleRules
 			"NavigationSystem",
 			"AIModule",
 			"Niagara"
-		
-		
-		
 		});
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });

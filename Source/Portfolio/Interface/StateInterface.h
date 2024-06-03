@@ -38,7 +38,6 @@ public:
 	inline void SetStateSubsystem(UCharacterStateSubsystem* StateSubsystemIn) { StateSubsystem = StateSubsystemIn; }
 
 public:
-	UFUNCTION()
 	virtual ECreatureState GetState() = 0;
 
 public:
@@ -66,6 +65,13 @@ public:
 
 public:
 	virtual void HandleAttack(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		ACreature* Target
+	) = 0;
+
+public:
+	virtual void HandleChase(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller
 	) = 0;

@@ -15,18 +15,18 @@ class PORTFOLIO_API UCombatReadyState : public UObject, public IStateInterface
 private:
 	UCombatReadyState();
 
-public:
-	UFUNCTION()
-	virtual ECreatureState GetState() override;
-
 protected:
 	FTimerHandle ToIdleTimerHandle;
+
+protected:
 	FTimerDelegate ToIdleDelegate;
 
 public:
-	virtual void ExitState(ACreature* Creature) override;
-	
+	virtual void ExitState(ACreature* Creature) override;	
 	virtual void EnterState(ACreature* Creature) override;
+
+public:
+	virtual ECreatureState GetState() override;
 
 public:
 	virtual bool IsTransitable(ECreatureState NewState) override;
@@ -49,7 +49,7 @@ public:
 public:
 	virtual void HandleAttack(
 		ACreature* Creature,
-		ADefaultPlayerController* Controller
+		ADefaultPlayerController* Controller,
+		ACreature* Target
 	) override;
-	
 };

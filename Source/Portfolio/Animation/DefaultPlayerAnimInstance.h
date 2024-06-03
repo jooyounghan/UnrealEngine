@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Interface/StateInterface.h"
 #include "Animation/AnimInstance.h"
 #include "DefaultPlayerAnimInstance.generated.h"
 
@@ -37,4 +38,8 @@ protected:
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bShouldMove = false;
+
+protected:
+	UPROPERTY(BlueprintReadOnly)
+	ECreatureState CharacterState;
 };

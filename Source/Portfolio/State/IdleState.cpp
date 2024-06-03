@@ -2,6 +2,7 @@
 
 #include "IdleState.h"
 #include "Character/Creature.h"
+#include "State/CharacterStateSubsystem.h"
 
 UIdleState::UIdleState()
 	: IStateInterface()
@@ -15,6 +16,7 @@ void UIdleState::ExitState(ACreature* Creature)
 
 void UIdleState::EnterState(ACreature* Creature)
 {
+	Creature->ResetTargetToAttack();
 	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Idle"));
 }
 
@@ -49,12 +51,14 @@ void UIdleState::HandleMoveWithDirection(
 
 void UIdleState::HandleAttack(
 	ACreature* Creature,
-	ADefaultPlayerController* Controller
+	ADefaultPlayerController* Controller,
+	ACreature* Target
 )
 {
-	ACreature* TargetToAttack = Creature->GetTargetToAttack();
-	if (TargetToAttack)
-	{
+	Target ? Creature->SetTargetToAttack(Target) : Creature->ResetTargetToAttack();
 
+	if (Target)
+	{
+		StateSubsystem->SetState(Creature, ECreatureState::CombatReady);
 	}
 }

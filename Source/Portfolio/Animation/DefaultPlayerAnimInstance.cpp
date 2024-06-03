@@ -22,10 +22,11 @@ void UDefaultPlayerAnimInstance::NativeInitializeAnimation()
 
 void UDefaultPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
-	if (Creature == nullptr) return;
+	if (Creature == nullptr || Creature->CharacterState == nullptr) return;
 	if (CharacterMovement == nullptr) return;
 
 	Velocity = CharacterMovement->Velocity;
 	GroundSpeed = Velocity.Size2D();
 	bShouldMove = GroundSpeed > 3.f;
+	CharacterState = Creature->CharacterState->GetState();
 }
