@@ -1,4 +1,6 @@
 #include "Character/Creature.h"
+#include "Util/DefaultGamePlayTags.h"
+#include "Interface/StateInterface.h"
 
 ACreature::ACreature()
 {
@@ -33,6 +35,11 @@ void ACreature::Target()
 void ACreature::UnTarget()
 {
 	bIsTargeted = false;
+}
+
+void ACreature::HandleGamePlayEvent(FGameplayTag EventTag)
+{
+	CharacterState->HandleGamePlayEvent(this, EventTag);
 }
 
 bool ACreature::IsNearForAttacking()

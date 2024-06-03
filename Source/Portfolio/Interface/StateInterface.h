@@ -26,6 +26,7 @@ enum class ECreatureState : uint8
 };
 
 struct FInputActionValue;
+struct FGameplayTag;
 
 class PORTFOLIO_API IStateInterface
 {
@@ -63,18 +64,16 @@ public:
 		const FVector& Direction
 	) = 0;
 
-public:
 	virtual void HandleAttack(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		ACreature* Target
 	) = 0;
 
+	virtual void HandleChase(ACreature* Creature) = 0;
+
 public:
-	virtual void HandleChase(
-		ACreature* Creature,
-		ADefaultPlayerController* Controller
-	) = 0;
+	virtual void HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag) = 0;
 
 public:
 	void DefaultHandleMove(

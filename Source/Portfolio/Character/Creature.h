@@ -37,6 +37,9 @@ public:
 	virtual void Target() override;
 	virtual void UnTarget() override;
 
+public:
+	void HandleGamePlayEvent(FGameplayTag EventTag);
+
 protected:
 	UPROPERTY(Category = Target, VisibleAnywhere)
 	TObjectPtr<ACreature> TargetToAttack;

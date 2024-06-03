@@ -1,8 +1,11 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "IdleState.h"
-#include "Character/Creature.h"
 #include "State/CharacterStateSubsystem.h"
+
+#include "Character/Creature.h"
+
+#include "Util/DefaultGamePlayTags.h"
 
 UIdleState::UIdleState()
 	: IStateInterface()
@@ -17,7 +20,6 @@ void UIdleState::ExitState(ACreature* Creature)
 void UIdleState::EnterState(ACreature* Creature)
 {
 	Creature->ResetTargetToAttack();
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Idle"));
 }
 
 ECreatureState UIdleState::GetState()
@@ -61,4 +63,13 @@ void UIdleState::HandleAttack(
 	{
 		StateSubsystem->SetState(Creature, ECreatureState::CombatReady);
 	}
+}
+
+void UIdleState::HandleChase(ACreature* Creature)
+{
+	// Do Nothing 
+}
+
+void UIdleState::HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag)
+{
 }

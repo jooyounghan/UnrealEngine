@@ -12,6 +12,7 @@ void IStateInterface::DefaultHandleMove(
 )
 {
 	Controller->StopMovement();
+	Creature->ResetTargetToAttack();
 	Creature->AddMovementInput(ForwardVector, Movement.X);
 	Creature->AddMovementInput(RightVector, Movement.Y);
 

@@ -6,6 +6,11 @@
 namespace GamePlayTags
 {
 	UE_DEFINE_GAMEPLAY_TAG(Input,						"Input");
+
+		UE_DEFINE_GAMEPLAY_TAG(InputAttack,					"Input.Attack");
+			UE_DEFINE_GAMEPLAY_TAG(InputAttackBase,				"Input.Attack.Base");
+			UE_DEFINE_GAMEPLAY_TAG(InputAttackEnd,				"Input.Attack.End");
+
 		UE_DEFINE_GAMEPLAY_TAG(InputSkill,					"Input.Skill");
 			UE_DEFINE_GAMEPLAY_TAG(InputSkill1,					"Input.Skill.1");
 			UE_DEFINE_GAMEPLAY_TAG(InputSkill2,					"Input.Skill.2");

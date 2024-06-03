@@ -1,9 +1,15 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "State/CombatReadyState.h"
-#include "Character/Creature.h"
-#include "System/DefaultGameInstance.h"
 #include "State/CharacterStateSubsystem.h"
+
+#include "Character/Creature.h"
+
+#include "System/DefaultGameInstance.h"
+
+#include "Controller/DefaultPlayerController.h"
+
+#include "Util/DefaultGamePlayTags.h"
 
 UCombatReadyState::UCombatReadyState()
 	: IStateInterface()
@@ -18,8 +24,6 @@ void UCombatReadyState::ExitState(ACreature* Creature)
 
 void UCombatReadyState::EnterState(ACreature* Creature)
 {
-
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Combat Ready"));
 	Creature->GetWorldTimerManager().ClearTimer(ToIdleTimerHandle);
 
 	ToIdleDelegate = FTimerDelegate::CreateUObject(
@@ -76,4 +80,25 @@ void UCombatReadyState::HandleAttack(
 	{
 		StateSubsystem->SetState(Creature, ECreatureState::Combating);
 	}
+}
+
+void UCombatReadyState::HandleChase(ACreature* Creature)
+{
+	ACreature* Target = Creature->GetTargetToAttack();
+	if (Target)
+	{
+		if (Creature->IsNearForAttacking())
+		{
+			StateSubsystem->SetState(Creature, ECreatureState::Combating);
+		}
+		else
+		{
+			const FVector Direction = (Target->GetActorLocation() - Creature->GetActorLocation()).GetSafeNormal();
+			Creature->AddMovementInput(Direction);
+		}
+	}
+}
+
+void UCombatReadyState::HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag)
+{
 }

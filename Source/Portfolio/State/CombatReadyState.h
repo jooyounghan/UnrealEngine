@@ -46,10 +46,14 @@ public:
 		const FVector& Direction
 	) override;
 
-public:
 	virtual void HandleAttack(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		ACreature* Target
 	) override;
+
+	virtual void HandleChase(ACreature* Creature) override;
+
+public:
+	virtual void HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag) override;
 };

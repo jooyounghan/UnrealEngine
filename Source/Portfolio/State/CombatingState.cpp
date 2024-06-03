@@ -1,9 +1,9 @@
-// Fill out your copyright notice in the Description page of Project Settings.
-
-
 #include "State/CombatingState.h"
 #include "State/CharacterStateSubsystem.h"
+
 #include "Character/Creature.h"
+
+#include "Util/DefaultGamePlayTags.h"
 
 UCombatingState::UCombatingState()
 	: IStateInterface()
@@ -16,9 +16,7 @@ void UCombatingState::ExitState(ACreature* Creature)
 
 void UCombatingState::EnterState(ACreature* Creature)
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Combating"));
 	Creature->DefaultAttack();
-	StateSubsystem->SetState(Creature, ECreatureState::CombatReady);
 }
 
 ECreatureState UCombatingState::GetState()
@@ -58,4 +56,18 @@ void UCombatingState::HandleAttack(
 )
 {
 	// Can't Double Attack
+}
+
+void UCombatingState::HandleChase(ACreature* Creature)
+{
+	// Can't Chase
+}
+
+void UCombatingState::HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag)
+{
+	if (EventTag.MatchesTag(GamePlayTags::InputAttackEnd))
+	{
+		Creature->ResetTargetToAttack();
+		StateSubsystem->SetState(Creature, ECreatureState::CombatReady);
+	}
 }

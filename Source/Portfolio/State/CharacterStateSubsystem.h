@@ -9,9 +9,6 @@
 
 class ACreature;
 
-/**
- * 
- */
 UCLASS()
 class PORTFOLIO_API UCharacterStateSubsystem : public UGameInstanceSubsystem
 {
@@ -20,10 +17,13 @@ class PORTFOLIO_API UCharacterStateSubsystem : public UGameInstanceSubsystem
 public:
 	virtual void Initialize(FSubsystemCollectionBase& Collection) override;
 	virtual void Deinitialize() override;
-	
+
 protected:
 	UPROPERTY()
 	TMap<ECreatureState, TScriptInterface<IStateInterface>> StateEnumToClass;
+
+protected:
+	TMap<ECreatureState, FString> StateEnumToName;
 
 public:
 	void SetState(ACreature* Creature, ECreatureState NewStateID);

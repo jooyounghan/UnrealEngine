@@ -100,13 +100,7 @@ void ADefaultPlayerController::PlayerTick(float DeltaTime)
 	ShowControllerTargeting();
 	TraceMouseHit();
 
-	PossesedCharacter->CharacterState->HandleChase(PossesedCharacter, this);
-}
-
-void ADefaultPlayerController::StopMovement()
-{
-	Super::StopMovement();
-	PossesedCharacter->ResetTargetToAttack();
+	PossesedCharacter->CharacterState->HandleChase(PossesedCharacter);
 }
 
 void ADefaultPlayerController::ShowControllerTargeting()
@@ -158,7 +152,6 @@ void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValu
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0, Rotator.Yaw, 0));
 	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0, Rotator.Yaw, 0));
 
-	StopMovement();
 	PossesedCharacter->CharacterState->HandleMove(
 		PossesedCharacter,
 		this,

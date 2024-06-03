@@ -13,7 +13,9 @@
 
 void UCharacterStateSubsystem::Initialize(FSubsystemCollectionBase& Collection)
 {
-	UE_LOG(LogStateLoad, Log, TEXT("State Subsystem Initialized"));
+	StateEnumToName.Add(ECreatureState::Idle, FString(TEXT("Idle")));
+	StateEnumToName.Add(ECreatureState::CombatReady, FString(TEXT("Combat Ready")));
+	StateEnumToName.Add(ECreatureState::Combating, FString(TEXT("Combating")));
 
 	StateEnumToClass.Add(ECreatureState::Idle, NewObject<UIdleState>(this));
 	StateEnumToClass.Add(ECreatureState::CombatReady, NewObject<UCombatReadyState>(this));
@@ -43,6 +45,8 @@ void UCharacterStateSubsystem::SetState(ACreature* Creature, ECreatureState NewS
 			{
 				if (CurrentState->IsTransitable(NewStateID))
 				{
+					UE_LOG(LogStateChange, Log, TEXT("State Changed %s -> %s"), *StateEnumToName[CurrentState->GetState()], *StateEnumToName[NewState->GetState()]);
+
 					CurrentState->ExitState(Creature);
 					Creature->CharacterState = NewState;
 					NewState->EnterState(Creature);

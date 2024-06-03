@@ -26,9 +26,6 @@ protected:
 	virtual void SetupInputComponent() override;
 	virtual void PlayerTick(float DeltaTime) override;
 
-public:
-	virtual void StopMovement();
-
 protected:
 	void ShowControllerTargeting();
 
