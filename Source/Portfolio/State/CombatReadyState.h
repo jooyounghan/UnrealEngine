@@ -35,9 +35,7 @@ public:
 	virtual void HandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
-		const FVector2D& Movement,
-		const FVector& ForwardVector,
-		const FVector& RightVector
+		const FVector2D& Movement
 	) override;
 
 	virtual void HandleMouseClickingMove(

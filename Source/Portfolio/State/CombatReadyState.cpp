@@ -51,12 +51,10 @@ bool UCombatReadyState::IsTransitable(ECreatureState NewState)
 void UCombatReadyState::HandleKeyMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller,
-	const FVector2D& Movement, 
-	const FVector& ForwardVector, 
-	const FVector& RightVector
+	const FVector2D& Movement
 )
 {
-	DefaultHandleKeyMove(Creature, Controller, Movement, ForwardVector, RightVector);
+	DefaultHandleKeyMove(Creature, Controller, Movement);
 }
 
 void UCombatReadyState::HandleMouseClickingMove(

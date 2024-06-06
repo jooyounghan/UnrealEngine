@@ -7,11 +7,10 @@
 #include "DefaultPlayerController.generated.h"
 
 struct FInputActionValue;
-class UAnimMontage;
+class UCharacterStateSubsystem;
 class UNiagaraSystem;
 class ACreature;
 class AUnitPlayer;
-class AUnitEnemy;
 
 UCLASS()
 class PORTFOLIO_API ADefaultPlayerController : public APlayerController

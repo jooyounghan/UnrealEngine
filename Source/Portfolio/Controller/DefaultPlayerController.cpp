@@ -143,17 +143,10 @@ void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValu
 	FVector2D MovementVector = InputValue.Get<FVector2D>();
 	MovementVector.Normalize();
 
-	FRotator Rotator = PossesedCharacter->CameraComponent->GetComponentRotation();
-
-	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0, Rotator.Yaw, 0));
-	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0, Rotator.Yaw, 0));
-
 	PossesedCharacter->CharacterState->HandleKeyMove(
 		PossesedCharacter,
 		this,
-		MovementVector,
-		ForwardVector,
-		RightVector
+		MovementVector
 	);
 }
 

@@ -8,20 +8,24 @@
 #include "NiagaraFunctionLibrary.h"
 
 #include "Blueprint/AIBlueprintHelperLibrary.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void IStateInterface::DefaultHandleKeyMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller,
-	const FVector2D& Movement, 
-	const FVector& ForwardVector, 
-	const FVector& RightVector
+	const FVector2D& Movement
 )
 {
 	Controller->StopMovement();
+
+	const double Yaw = Creature->CameraComponent->GetComponentRotation().Yaw;
+
+	const FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0, Yaw, 0));
+	const FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0, Yaw, 0));
+
 	Creature->ResetTargetToAttack();
 	Creature->AddMovementInput(ForwardVector, Movement.X);
 	Creature->AddMovementInput(RightVector, Movement.Y);
-
 }
 
 void IStateInterface::DefaultHandleMouseClickingMove(

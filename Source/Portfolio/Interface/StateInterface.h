@@ -54,9 +54,7 @@ public:
 	virtual void HandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
-		const FVector2D& Movement,
-		const FVector& ForwardVector,
-		const FVector& RightVector
+		const FVector2D& Movement
 	) = 0;
 
 	virtual void HandleMouseClickingMove(
@@ -85,9 +83,7 @@ protected:
 	static void DefaultHandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
-		const FVector2D& Movement,
-		const FVector& ForwardVector,
-		const FVector& RightVector
+		const FVector2D& Movement
 	);
 
 protected:

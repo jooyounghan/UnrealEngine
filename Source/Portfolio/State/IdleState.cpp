@@ -35,12 +35,10 @@ bool UIdleState::IsTransitable(ECreatureState NewState)
 void UIdleState::HandleKeyMove(
 	ACreature* Creature,
 	ADefaultPlayerController* Controller,
-	const FVector2D& Movement, 
-	const FVector& ForwardVector, 
-	const FVector& RightVector
+	const FVector2D& Movement
 )
 {
-	DefaultHandleKeyMove(Creature, Controller, Movement, ForwardVector, RightVector);
+	DefaultHandleKeyMove(Creature, Controller, Movement);
 }
 
 void UIdleState::HandleMouseClickingMove(

@@ -24,13 +24,8 @@ void UDefaultPlayerAnimInstance::NativeInitializeAnimation()
 void UDefaultPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 {
 	if (Creature == nullptr || Creature->CharacterState == nullptr) return;
-	if (CharacterMovement == nullptr) return;
 
-	const double Yaw = Creature->CameraComponent->GetComponentRotation().Yaw;
-	const FVector WorldVelocity = CharacterMovement->Velocity;
-	Velocity.X = cos(Yaw) * WorldVelocity.X + sin(Yaw) * WorldVelocity.Y;
-	Velocity.Y = -sin(Yaw) * WorldVelocity.X + cos(Yaw) * WorldVelocity.Y;
-
+	Velocity = Creature->GetVelocity();
 	bShouldMove = Velocity.Size2D() > 3.f;
 	CharacterState = Creature->CharacterState->GetState();
 }

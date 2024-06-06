@@ -32,9 +32,7 @@ bool UCombatingState::IsTransitable(ECreatureState NewState)
 void UCombatingState::HandleKeyMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller,
-	const FVector2D& Movement,
-	const FVector& ForwardVector, 
-	const FVector& RightVector
+	const FVector2D& Movement
 )
 {
 	// Can't Move While Combating
