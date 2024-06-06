@@ -69,7 +69,6 @@ private:
 	void InputAttack(const struct FInputActionValue& InputValue);
 
 private:
-	void OnMouseMoveStarted();
 	void OnMouseMoveTriggered();
 	void OnMouseMoveReleased();
 

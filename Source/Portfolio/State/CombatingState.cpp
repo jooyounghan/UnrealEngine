@@ -29,7 +29,7 @@ bool UCombatingState::IsTransitable(ECreatureState NewState)
 	return NewState == ECreatureState::CombatReady;
 }
 
-void UCombatingState::HandleMove(
+void UCombatingState::HandleKeyMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller,
 	const FVector2D& Movement,
@@ -40,10 +40,18 @@ void UCombatingState::HandleMove(
 	// Can't Move While Combating
 }
 
-void UCombatingState::HandleMoveWithDirection(
+void UCombatingState::HandleMouseClickingMove(
+	ACreature* Creature, 
+	ADefaultPlayerController* Controller
+)
+{
+	// Can't Move While Combating
+}
+
+void UCombatingState::HandleMouseClickMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller, 
-	const FVector& Direction
+	UNiagaraSystem* ClickFX
 )
 {
 	// Can't Move While Combating

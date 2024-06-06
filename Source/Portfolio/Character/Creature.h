@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
 #include "Interface/TargetingInterface.h"
 #include "Creature.generated.h"
 
 class IStateInterface;
+struct FGameplayTag;
 
 UCLASS()
 class PORTFOLIO_API ACreature : public ACharacter, public ITargetingInterface
@@ -32,6 +35,24 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+protected:
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	float MaxSpringArmLength = 500.f;
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	float MinSpringArmLength = 200.f;
+public:
+	UFUNCTION()
+	inline float GetSpringArmLength() { return SpringArmComponent->TargetArmLength; }
+	UFUNCTION()
+	void SetSringArmLength(const float& Length);
+
+public:
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UCameraComponent> CameraComponent;
+
 
 public:
 	virtual void Target() override;

@@ -26,7 +26,7 @@ public:
 	virtual bool IsTransitable(ECreatureState NewState) override;
 
 public:
-	virtual void HandleMove(
+	virtual void HandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement,
@@ -34,10 +34,15 @@ public:
 		const FVector& RightVector
 	) override;
 
-	virtual void HandleMoveWithDirection(
-		ACreature* Creature, 
-		ADefaultPlayerController* Controller, 
-		const FVector& Direction
+	virtual void HandleMouseClickingMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller
+	) override;
+
+	virtual void HandleMouseClickMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		UNiagaraSystem* ClickFX
 	) override;
 
 	virtual void HandleAttack(

@@ -26,15 +26,12 @@ protected:
 	UPROPERTY()
 	TObjectPtr<ACreature> Creature;
 
-	UPROPERTY()
+	UPROPERTY(BlueprintReadOnly)
 	TObjectPtr<UCharacterMovementComponent> CharacterMovement;
 
 protected:
 	UPROPERTY(BlueprintReadOnly)
 	FVector Velocity = FVector::ZeroVector;
-
-	UPROPERTY(BlueprintReadOnly)
-	float GroundSpeed = 0.f;
 
 	UPROPERTY(BlueprintReadOnly)
 	bool bShouldMove = false;

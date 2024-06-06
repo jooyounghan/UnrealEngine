@@ -6,9 +6,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Kismet/GameplayStatics.h"
-#include "NiagaraSystem.h"
-#include "NiagaraFunctionLibrary.h"
-#include "Blueprint/AIBlueprintHelperLibrary.h"
 
 #include "Data/DefaultAssetManager.h"
 #include "Data/Asset/InputDataAsset.h"
@@ -80,7 +77,6 @@ void ADefaultPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(InputActionZoom, ETriggerEvent::Triggered, this, &ThisClass::InputZoom);
 
 
-			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Started, this, &ThisClass::OnMouseMoveStarted);
 			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Triggered, this, &ThisClass::OnMouseMoveTriggered);
 			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Completed, this, &ThisClass::OnMouseMoveReleased);
 			EnhancedInputComponent->BindAction(InputActionMoveByMouse, ETriggerEvent::Canceled, this, &ThisClass::OnMouseMoveReleased);
@@ -152,7 +148,7 @@ void ADefaultPlayerController::InputMoveByKey(const FInputActionValue& InputValu
 	FVector ForwardVector = UKismetMathLibrary::GetForwardVector(FRotator(0, Rotator.Yaw, 0));
 	FVector RightVector = UKismetMathLibrary::GetRightVector(FRotator(0, Rotator.Yaw, 0));
 
-	PossesedCharacter->CharacterState->HandleMove(
+	PossesedCharacter->CharacterState->HandleKeyMove(
 		PossesedCharacter,
 		this,
 		MovementVector,
@@ -196,34 +192,17 @@ void ADefaultPlayerController::InputAttack(const FInputActionValue& InputValue)
 	);
 }
 
-void ADefaultPlayerController::OnMouseMoveStarted()
-{
-	StopMovement();
-}  
-
 void ADefaultPlayerController::OnMouseMoveTriggered()
 {
 	MoveMousePressedTime += GetWorld()->GetDeltaSeconds();
-
-	FHitResult Hit;
-	bool bHitSuccess = GetHitResultUnderCursor(ECollisionChannel::ECC_Visibility, false, Hit);
-
-	if (bHitSuccess)
-	{
-		CachedDestination = Hit.Location;
-	}
-
-	FVector WorldDirection = (CachedDestination - PossesedCharacter->GetActorLocation()).GetSafeNormal();
-
-	PossesedCharacter->CharacterState->HandleMoveWithDirection(PossesedCharacter, this, WorldDirection);
+	PossesedCharacter->CharacterState->HandleMouseClickingMove(PossesedCharacter, this);
 }
 
 void ADefaultPlayerController::OnMouseMoveReleased()
 {
 	if (MoveMousePressedTime < MoveMousePresssedTreshold)
 	{
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(this, CachedDestination);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, FXCursor, CachedDestination);
+		PossesedCharacter->CharacterState->HandleMouseClickMove(PossesedCharacter, this, FXCursor);
 	}
 	MoveMousePressedTime = 0.f;
 }

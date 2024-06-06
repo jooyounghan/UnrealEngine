@@ -48,7 +48,7 @@ bool UCombatReadyState::IsTransitable(ECreatureState NewState)
 		|| NewState ==ECreatureState::Idle;
 }
 
-void UCombatReadyState::HandleMove(
+void UCombatReadyState::HandleKeyMove(
 	ACreature* Creature, 
 	ADefaultPlayerController* Controller,
 	const FVector2D& Movement, 
@@ -56,16 +56,24 @@ void UCombatReadyState::HandleMove(
 	const FVector& RightVector
 )
 {
-	DefaultHandleMove(Creature, Controller, Movement, ForwardVector, RightVector);
+	DefaultHandleKeyMove(Creature, Controller, Movement, ForwardVector, RightVector);
 }
 
-void UCombatReadyState::HandleMoveWithDirection(
+void UCombatReadyState::HandleMouseClickingMove(
 	ACreature* Creature, 
-	ADefaultPlayerController* Controller,
-	const FVector& Direction
+	ADefaultPlayerController* Controller
 )
 {
-	DefaultHandleMove(Creature, Controller, Direction);
+	IStateInterface::DefaultHandleMouseClickingMove(Creature, Controller);
+}
+
+void UCombatReadyState::HandleMouseClickMove(
+	ACreature* Creature, 
+	ADefaultPlayerController* Controller, 
+	UNiagaraSystem* ClickFX
+)
+{
+	IStateInterface::DefaultHandleMouseClickMove(Creature, Controller, ClickFX);
 }
 
 void UCombatReadyState::HandleAttack(

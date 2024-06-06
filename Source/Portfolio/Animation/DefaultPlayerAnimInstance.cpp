@@ -3,6 +3,7 @@
 
 #include "Animation/DefaultPlayerAnimInstance.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Character/Creature.h"
 #include "Animation/AnimMontage.h"
 
@@ -25,8 +26,11 @@ void UDefaultPlayerAnimInstance::NativeUpdateAnimation(float DeltaSeconds)
 	if (Creature == nullptr || Creature->CharacterState == nullptr) return;
 	if (CharacterMovement == nullptr) return;
 
-	Velocity = CharacterMovement->Velocity;
-	GroundSpeed = Velocity.Size2D();
-	bShouldMove = GroundSpeed > 3.f;
+	const double Yaw = Creature->CameraComponent->GetComponentRotation().Yaw;
+	const FVector WorldVelocity = CharacterMovement->Velocity;
+	Velocity.X = cos(Yaw) * WorldVelocity.X + sin(Yaw) * WorldVelocity.Y;
+	Velocity.Y = -sin(Yaw) * WorldVelocity.X + cos(Yaw) * WorldVelocity.Y;
+
+	bShouldMove = Velocity.Size2D() > 3.f;
 	CharacterState = Creature->CharacterState->GetState();
 }

@@ -27,6 +27,7 @@ enum class ECreatureState : uint8
 
 struct FInputActionValue;
 struct FGameplayTag;
+class UNiagaraSystem;
 
 class PORTFOLIO_API IStateInterface
 {
@@ -50,7 +51,7 @@ public:
 	virtual void EnterState(ACreature* Creature) = 0;
 
 public:
-	virtual void HandleMove(
+	virtual void HandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement,
@@ -58,10 +59,15 @@ public:
 		const FVector& RightVector
 	) = 0;
 
-	virtual void HandleMoveWithDirection(
-		ACreature* Creature, 
-		ADefaultPlayerController* Controller, 
-		const FVector& Direction
+	virtual void HandleMouseClickingMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller
+	) = 0;
+
+	virtual void HandleMouseClickMove(
+		ACreature* Creature,
+		ADefaultPlayerController* Controller,
+		UNiagaraSystem* ClickFX
 	) = 0;
 
 	virtual void HandleAttack(
@@ -75,18 +81,24 @@ public:
 public:
 	virtual void HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag) = 0;
 
-public:
-	void DefaultHandleMove(
+protected:
+	static void DefaultHandleKeyMove(
 		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement,
 		const FVector& ForwardVector,
 		const FVector& RightVector
 	);
-public:
-	void DefaultHandleMove(
+
+protected:
+	static void DefaultHandleMouseClickingMove(
 		ACreature* Creature, 
+		ADefaultPlayerController* Controller
+	);
+
+	static void DefaultHandleMouseClickMove(
+		ACreature* Creature,
 		ADefaultPlayerController* Controller,
-		const FVector& Direction
+		UNiagaraSystem* ClickFX
 	);
 };
