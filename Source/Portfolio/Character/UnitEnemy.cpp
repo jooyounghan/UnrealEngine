@@ -2,9 +2,17 @@
 
 
 #include "Character/UnitEnemy.h"
+#include "Components/CapsuleComponent.h"
+
 
 AUnitEnemy::AUnitEnemy()
 {
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	if (CapsuleComp != nullptr)
+	{
+		CapsuleComp->SetCollisionProfileName(TEXT("Enemy"));
+		CapsuleComp->UpdateCollisionProfile();
+	}
 }
 
 void AUnitEnemy::BeginPlay()

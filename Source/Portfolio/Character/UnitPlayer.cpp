@@ -1,12 +1,20 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "Character/UnitPlayer.h"
+#include "Components/CapsuleComponent.h"
 
 // Sets default values
 AUnitPlayer::AUnitPlayer()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
+	if (CapsuleComp != nullptr)
+	{
+		CapsuleComp->SetCollisionProfileName(TEXT("Player"));
+		CapsuleComp->UpdateCollisionProfile();
+	}
 }
 
 // Called when the game starts or when spawned

@@ -8,6 +8,11 @@ ADefaultAIController::ADefaultAIController(const FObjectInitializer& ObjectIniti
 {
 }
 
+void ADefaultAIController::BeginPlay()
+{
+	Super::BeginPlay();
+}
+
 void ADefaultAIController::OnPossess(APawn* InPawn)
 {
 	Super::OnPossess(InPawn);
