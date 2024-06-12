@@ -22,19 +22,13 @@ public:
 	ACreature();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	virtual void Tick(float DeltaTime) override;
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 public:
 	UPROPERTY(BlueprintReadOnly)
 	TScriptInterface<IStateInterface> CharacterState;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 protected:
 	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
@@ -43,16 +37,16 @@ protected:
 	float MaxSpringArmLength = 500.f;
 	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
 	float MinSpringArmLength = 200.f;
-public:
-	UFUNCTION()
-	inline float GetSpringArmLength() { return SpringArmComponent->TargetArmLength; }
-	UFUNCTION()
-	void SetSringArmLength(const float& Length);
 
 public:
 	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
 	TObjectPtr<UCameraComponent> CameraComponent;
 
+public:
+	UFUNCTION()
+	inline float GetSpringArmLength() { return SpringArmComponent->TargetArmLength; }
+	UFUNCTION()
+	void SetSringArmLength(const float& Length);
 
 public:
 	virtual void Target() override;
@@ -79,16 +73,37 @@ public:
 	UPROPERTY(Category = Target, BlueprintReadOnly)
 	float MaxEnemyFindDistance = 10000.f;
 
-public:
-	bool IsNearForAttacking();
-
 protected:
 	bool bIsAttackable = false;
 
 public:
+	bool IsNearForAttacking();
 	void DefaultAttack();
 
 public:
 	UPROPERTY(Category = Animation, EditAnywhere)
 	TObjectPtr<UAnimMontage> AttackAnimMontage;
+
+protected:
+	UPROPERTY(Category = Stat, EditAnywhere)
+	int32 Hp = 100;
+	UPROPERTY(Category = Stat, EditAnywhere)
+	int32 MaxHp = 100;
+
+protected:
+	UPROPERTY(Category = Stat, EditAnywhere)
+	int32 Mp = 100;
+	UPROPERTY(Category = Stat, EditAnywhere)
+	int32 MaxMp = 100;
+
+protected:
+	UPROPERTY(Category = Stat, EditAnywhere)
+	TObjectPtr<class UWidgetComponent> HpBarComponent;
+
+	UPROPERTY(Category = Stat, EditAnywhere)
+	TObjectPtr<class UWidgetComponent> MpBarComponent;
+
+protected:
+	virtual void SetHpBarStyle();
+	virtual void SetMpBarStyle();
 };

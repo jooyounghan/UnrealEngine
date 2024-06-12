@@ -10,7 +10,8 @@ AUnitEnemy::AUnitEnemy()
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	if (CapsuleComp != nullptr)
 	{
-		CapsuleComp->SetCollisionProfileName(TEXT("Enemy"));
+		CapsuleComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel3);
+		//CapsuleComp->SetCollisionProfileName(TEXT("Enemy"));
 		CapsuleComp->UpdateCollisionProfile();
 	}
 }

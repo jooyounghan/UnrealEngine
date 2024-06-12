@@ -23,8 +23,9 @@ public class Portfolio : ModuleRules
 			"GameplayTags",
 			"NavigationSystem",
 			"AIModule",
-			"Niagara"
-		});
+			"Niagara",
+			"UMG"
+        });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

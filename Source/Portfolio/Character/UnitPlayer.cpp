@@ -12,7 +12,8 @@ AUnitPlayer::AUnitPlayer()
 	UCapsuleComponent* CapsuleComp = GetCapsuleComponent();
 	if (CapsuleComp != nullptr)
 	{
-		CapsuleComp->SetCollisionProfileName(TEXT("Player"));
+		CapsuleComp->SetCollisionObjectType(ECollisionChannel::ECC_GameTraceChannel2);
+		//CapsuleComp->SetCollisionProfileName(TEXT("Player"));
 		CapsuleComp->UpdateCollisionProfile();
 	}
 }

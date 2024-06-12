@@ -2,7 +2,11 @@
 #include "Util/DefaultGamePlayTags.h"
 #include "Interface/StateInterface.h"
 #include "GameFramework/CharacterMovementComponent.h"
+
+#include "Log/LogChannel.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/WidgetComponent.h"
+#include "UI/Stat/StatBar.h"
 
 ACreature::ACreature()
 {
@@ -30,12 +34,35 @@ ACreature::ACreature()
 		MovementComponent->bOrientRotationToMovement = true;
 		MovementComponent->RotationRate.SetComponentForAxis(EAxis::Z, 540.f);
 	}
+
+	HpBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("HPBar"));
+	MpBarComponent = CreateDefaultSubobject<UWidgetComponent>(TEXT("MPBar"));
+	HpBarComponent->SetupAttachment(RootComponent);
+	MpBarComponent->SetupAttachment(RootComponent);
+
+	ConstructorHelpers::FClassFinder<UUserWidget> StatBarWidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WBP_StatBar.WBP_StatBar_C'"));
+	if (StatBarWidgetClass.Succeeded())
+	{
+		HpBarComponent->SetWidgetClass(StatBarWidgetClass.Class);
+		HpBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
+		HpBarComponent->SetDrawAtDesiredSize(true);
+		HpBarComponent->SetRelativeLocation(FVector(0.f, 0.f, 150.f));
+
+		MpBarComponent->SetWidgetClass(StatBarWidgetClass.Class);
+		MpBarComponent->SetWidgetSpace(EWidgetSpace::Screen);
+		MpBarComponent->SetDrawAtDesiredSize(true);
+		MpBarComponent->SetRelativeLocation(FVector(0.f, 0.f, 140.f));
+	}
+
 }
 
 // Called when the game starts or when spawned
 void ACreature::BeginPlay()
 {
 	Super::BeginPlay();
+
+	SetHpBarStyle();
+	SetMpBarStyle();
 }
 
 
@@ -86,6 +113,33 @@ void ACreature::DefaultAttack()
 		const FString AttackFormatted = FString::Format(*AttackFormatter, { rand() % AttackAnimMontage->GetNumSections() });
 		PlayAnimMontage(AttackAnimMontage, 1.0f, *AttackFormatted);
 	}
+}
+
+void ACreature::SetHpBarStyle()
+{
+	if (HpBarComponent)
+	{
+		UStatBar* HpBarWidget = Cast<UStatBar>(HpBarComponent->GetUserWidgetObject());
+		if (HpBarWidget)
+		{
+			HpBarWidget->SetColorAndOpacity(FLinearColor(0.9f, 0.02f, 0.1f, 1.f));
+			HpBarWidget->SetRatio(1.f);
+		}
+	}
+}
+
+void ACreature::SetMpBarStyle()
+{
+	if (MpBarComponent)
+	{
+		UStatBar* MpBarWidget = Cast<UStatBar>(MpBarComponent->GetUserWidgetObject());
+		if (MpBarWidget)
+		{
+			MpBarWidget->SetColorAndOpacity(FLinearColor(0.1f, 0.02f, 0.9f, 1.f));
+			MpBarWidget->SetRatio(1.f);
+		}
+	}
+
 }
 
 
