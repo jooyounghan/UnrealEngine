@@ -6,12 +6,6 @@ UStatBar::UStatBar(const FObjectInitializer& ObjectInitializer)
 {
 }
 
-bool UStatBar::Initialize()
-{
-	Super::Initialize();
-	return false;
-}
-
 void UStatBar::NativeConstruct()
 {
 	Super::NativeConstruct();

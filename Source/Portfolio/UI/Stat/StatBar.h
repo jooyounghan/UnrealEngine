@@ -18,7 +18,6 @@ public:
 	UStatBar(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
 
 public:
-	virtual bool Initialize() override;
 	virtual void NativeConstruct() override;
 
 public:
