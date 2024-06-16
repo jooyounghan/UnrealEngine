@@ -5,7 +5,10 @@
 #include "InventorySlotsWidget.generated.h"
 
 class UUniformGridPanel;
+class UCanvasPanel;
 class UInventorySlotWidget;
+class UInventoryEntryWidget;
+class UBaseItem;
 
 UCLASS()
 class PORTFOLIO_API UInventorySlotsWidget : public UUserWidget
@@ -18,7 +21,21 @@ public:
 public:
 	virtual void NativeConstruct() override;
 
+public:
+	void UpdateInventoryEntries(
+		const FIntPoint& DestinationPoint, 
+		UBaseItem* Item
+	);
+
 protected:
+	bool CheckIsPlaceable(
+		const FIntPoint& DestinationPoint,
+		UBaseItem* ChekcingItem,
+		UBaseItem*& PreOccupiedItemOut
+	);
+
+protected:
+	// TODO : Inventory SubSystem에서 Inventory와 관련된 모든 데이터를 처리하도록 변경
 	UPROPERTY()
 	int32 XSlotNum = 10;
 	UPROPERTY()
@@ -27,10 +44,20 @@ protected:
 protected:
 	UPROPERTY()
 	TSubclassOf<UInventorySlotWidget> InventorySlotClass;
-
 	UPROPERTY()
 	TArray<TObjectPtr<UInventorySlotWidget>> InventorySlots;
 
+protected:
+	UPROPERTY()
+	TSubclassOf<UInventoryEntryWidget> InventoryEntryClass;
+	UPROPERTY()
+	TArray<TObjectPtr<UInventoryEntryWidget>> InventoryEntries;
+
+protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> UniformGridPanel_Slots;
+
+protected:
+	UPROPERTY(meta = (BindWidget))
+	TObjectPtr<UCanvasPanel> CanvasPanel_Entries;
 };
