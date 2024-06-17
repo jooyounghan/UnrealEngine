@@ -14,7 +14,7 @@ void UInventorySubsystem::Initialize(FSubsystemCollectionBase& Collection)
 	{
 		TObjectPtr<UBaseItem> DebugItem = NewObject<UBaseItem>();
 		DebugItem->SetOccupiedSlotsCount(FIntPoint(1, 1));
-		DebugItem->SetPosition(FIntPoint(0, idx));
+		DebugItem->SetRootPositionFromDestination(FIntPoint(0, idx));
 		DebugItem->SetCount(idx + 1);
 		Items.Add(DebugItem);
 	}

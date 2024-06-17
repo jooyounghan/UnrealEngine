@@ -29,6 +29,9 @@ void UInventoryEntryWidget::Init(UInventorySlotWidget* RootSlotWidgetIn, UBaseIt
 {
 	RootSlotWidget = RootSlotWidgetIn;
 	Item = ItemIn;
+
+	const int32& ItemCount = Item->GetCount();
+	Text_Count->SetText((ItemCount > 1) ? FText::AsNumber(ItemCount) : FText::GetEmpty());
 }
 
 void UInventoryEntryWidget::NativeConstruct()
@@ -45,15 +48,12 @@ void UInventoryEntryWidget::NativeConstruct()
 void UInventoryEntryWidget::NativeOnMouseEnter(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseEnter(InGeometry, InMouseEvent);
-
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Mouse Enter"));
 	Image_IconHover->SetOpacity(1.f);
 }
 
 void UInventoryEntryWidget::NativeOnMouseLeave(const FPointerEvent& InMouseEvent)
 {
 	Super::NativeOnMouseLeave(InMouseEvent);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Mouse Leave"));
 	Image_IconHover->SetOpacity(0.f);
 }
 
@@ -64,11 +64,10 @@ FReply UInventoryEntryWidget::NativeOnMouseButtonDown(const FGeometry& InGeometr
 	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
 	{
 		Reply.DetectDrag(TakeWidget(), EKeys::LeftMouseButton);
+		FVector2D OffsetPositionFromRoot = RootSlotWidget->GetCachedGeometry().AbsoluteToLocal(InGeometry.LocalToAbsolute(UInventorySlotWidget::SlotWidgetSize));
+		FIntPoint OffsetSlotsFromRoot = FIntPoint(OffsetPositionFromRoot.X / UInventorySlotWidget::SlotWidgetSize.X / OffsetPositionFromRoot.Y / UInventorySlotWidget::SlotWidgetSize.Y);
+		Item->UpdateSlotOffsetFromRoot(OffsetSlotsFromRoot);
 	}
-	
-	FVector2D ItemWidgetPos = RootSlotWidget->GetCachedGeometry().AbsoluteToLocal(InGeometry.LocalToAbsolute(UInventorySlotWidget::SlotWidgetSize));
-	FIntPoint ItemSlotPos = FIntPoint(ItemWidgetPos.X / UInventorySlotWidget::SlotWidgetSize.X / ItemWidgetPos.Y / UInventorySlotWidget::SlotWidgetSize.Y);
-	Item->UpdateSelect(ItemSlotPos);
 
 	return Reply;
 }
@@ -107,29 +106,7 @@ void UInventoryEntryWidget::NativeOnDragEnter(const FGeometry& InGeometry, const
 	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Enter"));
 }
 
-void UInventoryEntryWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Leave"));
-}
-
-bool UInventoryEntryWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	bool OnDragOver = Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Over"));
-
-	return OnDragOver;
-}
-
-bool UInventoryEntryWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	bool OnDrop = Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drop"));
-	return OnDrop;
-}
-
 void UInventoryEntryWidget::NativeOnDragCancelled(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
 {
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Cancelled"));
 	Super::NativeOnDragCancelled(InDragDropEvent, InOperation);
 }

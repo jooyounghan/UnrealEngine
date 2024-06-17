@@ -27,6 +27,9 @@ public:
 		UBaseItem* Item
 	);
 
+public:
+	void RemoveItemFromSlots(UBaseItem* Item);
+
 protected:
 	bool CheckIsPlaceable(
 		const FIntPoint& DestinationPoint,
@@ -57,7 +60,12 @@ protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UUniformGridPanel> UniformGridPanel_Slots;
 
-protected:
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UCanvasPanel> CanvasPanel_Entries;
+
+protected:
+	virtual void NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+	virtual bool NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+	virtual bool NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation);
+
 };

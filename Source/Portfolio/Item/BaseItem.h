@@ -22,17 +22,17 @@ protected:
 	FIntPoint OccupiedSlotsCount = FIntPoint(0, 0);
 
 	UPROPERTY()
-	FIntPoint ItemPosition = FIntPoint(0, 0);
+	FIntPoint ItemRootPosition = FIntPoint(0, 0);
 
 public:
 	inline void SetOccupiedSlotsCount(const FIntPoint& OccupiedSlotsCountIn) { OccupiedSlotsCount = OccupiedSlotsCountIn; }
-	inline void SetPosition(const FIntPoint& NewPosition) { ItemPosition = NewPosition; }
-	inline const FIntPoint GetOccupiedSlotsCount() { return OccupiedSlotsCount; }
-	inline const FIntPoint GetPosition() { return ItemPosition; }
+	inline void SetRootPositionFromDestination(const FIntPoint& DestinationPosition) { ItemRootPosition = DestinationPosition - SelectedSlotOffsetFromRoot; }
+	inline const FIntPoint& GetOccupiedSlotsCount() { return OccupiedSlotsCount; }
+	inline const FIntPoint& GetRootPosition() { return ItemRootPosition; }
 
 protected:
 	UPROPERTY()
-	FIntPoint ItemSelectedOffset = FIntPoint(0, 0);
+	FIntPoint SelectedSlotOffsetFromRoot = FIntPoint(0, 0);
 
 protected:
 	int32 ItemCount = 0;
@@ -50,11 +50,11 @@ public:
 
 
 public:
-	void UpdateSelect(const FIntPoint& NewSelectedPosition);
+	inline void UpdateSlotOffsetFromRoot(const FIntPoint& SlotOffsetFromRootIn) { SelectedSlotOffsetFromRoot = SlotOffsetFromRootIn;}
 
 public:
 	TArray<FIntPoint> GetPositionsToDestination(
 		const FIntPoint& DestinationPos
 	);
-
+	inline TArray<FIntPoint> GetPositions() { return GetPositionsToDestination(ItemRootPosition); }
 };

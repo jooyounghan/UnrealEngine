@@ -8,6 +8,7 @@
 
 #include "Item/BaseItem.h"
 #include "Item/InventorySubsystem.h"
+#include "Item/DragDrop/ItemDragDropOperation.h"
 
 #include "Subsystems/SubsystemBlueprintLibrary.h"
 
@@ -66,7 +67,7 @@ void UInventorySlotsWidget::NativeConstruct()
 		const TArray<TObjectPtr<UBaseItem>>& Items = Inventory->GetItems();
 		for (const TObjectPtr<UBaseItem>& Item : Items)
 		{
-			UpdateInventoryEntries(Item->GetPosition(), Item);
+			UpdateInventoryEntries(Item->GetRootPosition(), Item);
 		}
 	}
 }
@@ -79,26 +80,49 @@ void UInventorySlotsWidget::UpdateInventoryEntries(
 	UBaseItem* PreOccupiedItem = nullptr;
 	bool bIsPlaceable = CheckIsPlaceable(DestinationPoint, Item, PreOccupiedItem);
 
-	TArray<FIntPoint> Positions = Item->GetPositionsToDestination(DestinationPoint);
-
-	if (PreOccupiedItem)
+	if (bIsPlaceable)
 	{
-		// Remove Entries Of PreOccupiedItem
+		// Remove PreOccupied Item
+		RemoveItemFromSlots(PreOccupiedItem);
+
+		// Remove From Old Position
+		RemoveItemFromSlots(Item);
+
+		// Add To New Position
+		Item->SetRootPositionFromDestination(DestinationPoint);
+		const FIntPoint& ItemRootSlotPos = Item->GetRootPosition();
+		int32 RootSlotIndex = ItemRootSlotPos.X + ItemRootSlotPos.Y * XSlotNum;
+
+		TArray<FIntPoint> NewPositions = Item->GetPositionsToDestination(DestinationPoint);
+		for (const FIntPoint& Position : NewPositions)
+		{
+			int32 EntryIndex = Position.X + Position.Y * XSlotNum;
+			UInventoryEntryWidget* EntryWidget = CreateWidget<UInventoryEntryWidget>(GetOwningPlayer(), InventoryEntryClass);
+			InventoryEntries[EntryIndex] = EntryWidget;
+
+			EntryWidget->Init(InventorySlots[RootSlotIndex], Item);
+
+			const FVector2D SlotWidgetSize = UInventorySlotWidget::SlotWidgetSize;
+
+			UCanvasPanelSlot* CanvasPanelSlot = CanvasPanel_Entries->AddChildToCanvas(EntryWidget);
+			CanvasPanelSlot->SetAutoSize(true);
+			CanvasPanelSlot->SetPosition(FVector2D(Position.X * SlotWidgetSize.X, Position.Y * SlotWidgetSize.Y));
+
+		}
 	}
+}
 
-	for (const FIntPoint& Position : Positions)
+void UInventorySlotsWidget::RemoveItemFromSlots(UBaseItem* Item)
+{
+	if (Item)
 	{
-		int32 EntryIndex = Position.X + Position.Y * XSlotNum;
-		UInventoryEntryWidget* EntryWidget = CreateWidget<UInventoryEntryWidget>(GetOwningPlayer(), InventoryEntryClass);
-		InventoryEntries[EntryIndex] = EntryWidget;
-
-		EntryWidget->Init(InventorySlots[EntryIndex], Item);
-
-		const FVector2D SlotWidgetSize = UInventorySlotWidget::SlotWidgetSize;
-
-		UCanvasPanelSlot* CanvasPanelSlot = CanvasPanel_Entries->AddChildToCanvas(EntryWidget);
-		CanvasPanelSlot->SetAutoSize(true);
-		CanvasPanelSlot->SetPosition(FVector2D(Position.X * SlotWidgetSize.X, Position.Y * SlotWidgetSize.Y));
+		TArray<FIntPoint> ItemPositions = Item->GetPositions();
+		for (const FIntPoint& Position : ItemPositions)
+		{
+			int32 EntryIndex = Position.X + Position.Y * XSlotNum;
+			CanvasPanel_Entries->RemoveChild(InventoryEntries[EntryIndex]);
+			InventoryEntries[EntryIndex] = nullptr;
+		}
 
 	}
 }
@@ -141,4 +165,31 @@ bool UInventorySlotsWidget::CheckIsPlaceable(
 	}
 
 	return bIsPlaceable;
+}
+
+void UInventorySlotsWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
+	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Leave"));
+}
+
+bool UInventorySlotsWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	bool OnDragOver = Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
+	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Over"));
+
+	return OnDragOver;
+}
+
+bool UInventorySlotsWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+{
+	bool OnDrop = Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+
+	UItemDragDropOperation* DragDrop = Cast<UItemDragDropOperation>(InOperation);
+
+	FVector2D MouseWidgetPos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
+	FIntPoint SlotPos = FIntPoint(MouseWidgetPos.X / UInventorySlotWidget::SlotWidgetSize.X, MouseWidgetPos.Y / UInventorySlotWidget::SlotWidgetSize.Y);
+
+	UpdateInventoryEntries(SlotPos, DragDrop->Item);
+	return OnDrop;
 }
