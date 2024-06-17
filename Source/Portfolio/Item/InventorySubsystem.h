@@ -26,4 +26,9 @@ protected:
 
 public:
 	inline const TArray<TObjectPtr<UBaseItem>>& GetItems() { return Items; }
+
+public:
+	UPROPERTY()
+	TObjectPtr<UItemDragDropWidget> SelectedItem;
+
 };

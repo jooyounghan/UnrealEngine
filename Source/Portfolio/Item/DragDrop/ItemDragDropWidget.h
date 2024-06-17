@@ -9,6 +9,7 @@
 class USizeBox;
 class UTextBlock;
 class UImage;
+class UBaseITem;
 
 UCLASS()
 class PORTFOLIO_API UItemDragDropWidget : public UUserWidget
@@ -17,10 +18,20 @@ class PORTFOLIO_API UItemDragDropWidget : public UUserWidget
 
 public:
 	UItemDragDropWidget(const FObjectInitializer& ObjectInitializer = FObjectInitializer::Get());
-	void Init(
-		const FIntPoint& OccupiedSlotsCountIn,
-		UTexture2D* ItemIcon, int32 ItemCount
-	);
+
+public:
+	void Init(UBaseItem* ItemIn);
+
+public:
+	virtual void NativeConstruct() override;
+	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime);
+
+public:
+	void SetAttachedToMouse();
+
+public:
+	UPROPERTY()
+	TObjectPtr<UBaseItem> Item;
 
 protected:
 	UPROPERTY(meta = (BindWidget))
@@ -31,5 +42,4 @@ protected:
 
 	UPROPERTY(meta = (BindWidget))
 	TObjectPtr<UImage> Image_Icon;
-	
 };

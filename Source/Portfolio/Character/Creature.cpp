@@ -40,7 +40,7 @@ ACreature::ACreature()
 	HpBarComponent->SetupAttachment(RootComponent);
 	MpBarComponent->SetupAttachment(RootComponent);
 
-	ConstructorHelpers::FClassFinder<UUserWidget> StatBarWidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/WBP_StatBar.WBP_StatBar_C'"));
+	ConstructorHelpers::FClassFinder<UUserWidget> StatBarWidgetClass(TEXT("/Script/UMGEditor.WidgetBlueprint'/Game/UI/Stat/WBP_StatBar.WBP_StatBar_C'"));
 	if (StatBarWidgetClass.Succeeded())
 	{
 		HpBarComponent->SetWidgetClass(StatBarWidgetClass.Class);

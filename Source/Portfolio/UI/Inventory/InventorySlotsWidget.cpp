@@ -8,7 +8,7 @@
 
 #include "Item/BaseItem.h"
 #include "Item/InventorySubsystem.h"
-#include "Item/DragDrop/ItemDragDropOperation.h"
+#include "Item/DragDrop/ItemDragDropWidget.h"
 
 #include "Subsystems/SubsystemBlueprintLibrary.h"
 
@@ -167,29 +167,42 @@ bool UInventorySlotsWidget::CheckIsPlaceable(
 	return bIsPlaceable;
 }
 
-void UInventorySlotsWidget::NativeOnDragLeave(const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
+FReply UInventorySlotsWidget::NativeOnMouseButtonDown(const FGeometry& InGeometry, const FPointerEvent& InMouseEvent)
 {
-	Super::NativeOnDragLeave(InDragDropEvent, InOperation);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Leave"));
-}
+	FReply Reply = Super::NativeOnMouseButtonDown(InGeometry, InMouseEvent);
 
-bool UInventorySlotsWidget::NativeOnDragOver(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	bool OnDragOver = Super::NativeOnDragOver(InGeometry, InDragDropEvent, InOperation);
-	GEngine->AddOnScreenDebugMessage(0, 1.f, FColor::Black, TEXT("Drag Over"));
+	if (InMouseEvent.GetEffectingButton() == EKeys::LeftMouseButton)
+	{
+		UInventorySubsystem* Inventory = Cast<UInventorySubsystem>(
+			USubsystemBlueprintLibrary::GetLocalPlayerSubsystem(
+				this, UInventorySubsystem::StaticClass()
+			)
+		);
 
-	return OnDragOver;
-}
+		if (Inventory)
+		{
+			UItemDragDropWidget* SelectedItemWidget = Inventory->SelectedItem;
+			if (SelectedItemWidget == nullptr)
+			{
+				// Picking Item Through This Path Is Invalid
+				// Check UInventoryEntryWidget::NativeOnMouseButtonDown
+				Reply = FReply::Unhandled();
+			}
+			// Placing Item
+			else
+			{				
+				FVector2D MouseWidgetPos = InGeometry.AbsoluteToLocal(InMouseEvent.GetScreenSpacePosition());
+				FIntPoint SlotPos = FIntPoint(MouseWidgetPos.X / UInventorySlotWidget::SlotWidgetSize.X, MouseWidgetPos.Y / UInventorySlotWidget::SlotWidgetSize.Y);				
+				UpdateInventoryEntries(SlotPos, SelectedItemWidget->Item);
 
-bool UInventorySlotsWidget::NativeOnDrop(const FGeometry& InGeometry, const FDragDropEvent& InDragDropEvent, UDragDropOperation* InOperation)
-{
-	bool OnDrop = Super::NativeOnDrop(InGeometry, InDragDropEvent, InOperation);
+				Inventory->SelectedItem->ConditionalBeginDestroy();
+				Inventory->SelectedItem = nullptr;
 
-	UItemDragDropOperation* DragDrop = Cast<UItemDragDropOperation>(InOperation);
+				Reply = FReply::Handled();
+			}
 
-	FVector2D MouseWidgetPos = InGeometry.AbsoluteToLocal(InDragDropEvent.GetScreenSpacePosition());
-	FIntPoint SlotPos = FIntPoint(MouseWidgetPos.X / UInventorySlotWidget::SlotWidgetSize.X, MouseWidgetPos.Y / UInventorySlotWidget::SlotWidgetSize.Y);
-
-	UpdateInventoryEntries(SlotPos, DragDrop->Item);
-	return OnDrop;
+		}
+		GEngine->ForceGarbageCollection(true);
+	}
+	return Reply;
 }
