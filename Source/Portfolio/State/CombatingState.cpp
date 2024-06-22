@@ -16,7 +16,7 @@ void UCombatingState::ExitState(ACreature* Creature)
 
 void UCombatingState::EnterState(ACreature* Creature)
 {
-	Creature->DefaultAttack();
+	DefaultAttack(Creature);
 }
 
 ECreatureState UCombatingState::GetState()
@@ -30,7 +30,7 @@ bool UCombatingState::IsTransitable(ECreatureState NewState)
 }
 
 void UCombatingState::HandleKeyMove(
-	ACreature* Creature, 
+	AUnitPlayer* UnitPlayer,
 	ADefaultPlayerController* Controller,
 	const FVector2D& Movement
 )
@@ -39,7 +39,7 @@ void UCombatingState::HandleKeyMove(
 }
 
 void UCombatingState::HandleMouseClickingMove(
-	ACreature* Creature, 
+	AUnitPlayer* UnitPlayer,
 	ADefaultPlayerController* Controller
 )
 {
@@ -47,7 +47,6 @@ void UCombatingState::HandleMouseClickingMove(
 }
 
 void UCombatingState::HandleMouseClickMove(
-	ACreature* Creature, 
 	ADefaultPlayerController* Controller, 
 	UNiagaraSystem* ClickFX
 )
@@ -75,5 +74,18 @@ void UCombatingState::HandleGamePlayEvent(ACreature* Creature, FGameplayTag Even
 	{
 		Creature->ResetTargetToAttack();
 		StateSubsystem->SetState(Creature, ECreatureState::CombatReady);
+	}
+}
+
+
+
+void UCombatingState::DefaultAttack(ACreature* Creature)
+{
+	UAnimMontage* AttackAnimMontage = Creature->AttackAnimMontage;
+	if (AttackAnimMontage)
+	{
+		const FString AttackFormatter = FString(TEXT("Attack_{0}"));
+		const FString AttackFormatted = FString::Format(*AttackFormatter, { rand() % AttackAnimMontage->GetNumSections() });
+		Creature->PlayAnimMontage(AttackAnimMontage, 1.0f, *AttackFormatted);
 	}
 }

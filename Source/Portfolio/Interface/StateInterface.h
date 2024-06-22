@@ -7,6 +7,7 @@
 #include "StateInterface.generated.h"
 
 class ACreature;
+class AUnitPlayer;
 class ADefaultPlayerController;
 class UCharacterStateSubsystem;
 
@@ -52,18 +53,17 @@ public:
 
 public:
 	virtual void HandleKeyMove(
-		ACreature* Creature,
+		AUnitPlayer* Creature,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement
 	) = 0;
 
 	virtual void HandleMouseClickingMove(
-		ACreature* Creature,
+		AUnitPlayer* Creature,
 		ADefaultPlayerController* Controller
 	) = 0;
 
 	virtual void HandleMouseClickMove(
-		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		UNiagaraSystem* ClickFX
 	) = 0;
@@ -81,19 +81,18 @@ public:
 
 protected:
 	static void DefaultHandleKeyMove(
-		ACreature* Creature,
+		AUnitPlayer* UnitPlayer,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement
 	);
 
 protected:
 	static void DefaultHandleMouseClickingMove(
-		ACreature* Creature, 
+		AUnitPlayer* UnitPlayer,
 		ADefaultPlayerController* Controller
 	);
 
 	static void DefaultHandleMouseClickMove(
-		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		UNiagaraSystem* ClickFX
 	);

@@ -30,24 +30,6 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	TScriptInterface<IStateInterface> CharacterState;
 
-protected:
-	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<USpringArmComponent> SpringArmComponent;
-	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
-	float MaxSpringArmLength = 500.f;
-	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
-	float MinSpringArmLength = 200.f;
-
-public:
-	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
-	TObjectPtr<UCameraComponent> CameraComponent;
-
-public:
-	UFUNCTION()
-	inline float GetSpringArmLength() { return SpringArmComponent->TargetArmLength; }
-	UFUNCTION()
-	void SetSringArmLength(const float& Length);
-
 public:
 	virtual void Target() override;
 	virtual void UnTarget() override;
@@ -73,12 +55,8 @@ public:
 	UPROPERTY(Category = Target, BlueprintReadOnly)
 	float MaxEnemyFindDistance = 10000.f;
 
-protected:
-	bool bIsAttackable = false;
-
 public:
 	bool IsNearForAttacking();
-	void DefaultAttack();
 
 public:
 	UPROPERTY(Category = Animation, EditAnywhere)

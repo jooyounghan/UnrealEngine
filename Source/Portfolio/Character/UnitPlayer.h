@@ -25,6 +25,23 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+protected:
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<USpringArmComponent> SpringArmComponent;
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	float MaxSpringArmLength = 500.f;
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	float MinSpringArmLength = 200.f;
+
+public:
+	UPROPERTY(Category = ViewPoint, VisibleAnywhere, BlueprintReadOnly)
+	TObjectPtr<UCameraComponent> CameraComponent;
+
+public:
+	UFUNCTION()
+	inline float GetSpringArmLength() { return SpringArmComponent->TargetArmLength; }
+	UFUNCTION()
+	void SetSringArmLength(const float& Length);
 
 protected:
 	void ShowTargeted();

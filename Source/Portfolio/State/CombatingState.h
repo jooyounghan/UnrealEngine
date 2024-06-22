@@ -27,18 +27,17 @@ public:
 
 public:
 	virtual void HandleKeyMove(
-		ACreature* Creature,
+		AUnitPlayer* UnitPlayer,
 		ADefaultPlayerController* Controller,
 		const FVector2D& Movement
 	) override;
 
 	virtual void HandleMouseClickingMove(
-		ACreature* Creature,
+		AUnitPlayer* UnitPlayer,
 		ADefaultPlayerController* Controller
 	) override;
 
 	virtual void HandleMouseClickMove(
-		ACreature* Creature,
 		ADefaultPlayerController* Controller,
 		UNiagaraSystem* ClickFX
 	) override;
@@ -50,6 +49,9 @@ public:
 	) override;
 
 	virtual void HandleChase(ACreature* Creature) override;
+
+public:
+	void DefaultAttack(ACreature* Creature);
 
 public:
 	virtual void HandleGamePlayEvent(ACreature* Creature, FGameplayTag EventTag) override;

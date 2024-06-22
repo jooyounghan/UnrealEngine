@@ -195,7 +195,7 @@ void ADefaultPlayerController::OnMouseMoveReleased()
 {
 	if (MoveMousePressedTime < MoveMousePresssedTreshold)
 	{
-		PossesedCharacter->CharacterState->HandleMouseClickMove(PossesedCharacter, this, FXCursor);
+		PossesedCharacter->CharacterState->HandleMouseClickMove(this, FXCursor);
 	}
 	MoveMousePressedTime = 0.f;
 }
